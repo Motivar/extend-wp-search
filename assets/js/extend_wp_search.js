@@ -34,7 +34,7 @@ function liveSearch() {
      * code for live search
      */
     var typingTimer; //timer identifier
-    var doneTypingInterval = 250; //time in ms, 5 second for example
+    var doneTypingInterval = 249; //time in ms, 5 second for example
     var $input = jQuery('input[name="searchtext"]');
 
     //on keyup, start the countdown
