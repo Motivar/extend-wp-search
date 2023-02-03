@@ -248,7 +248,6 @@ class Setup
   global $extend_wp_search_results;
   global $extend_wp_search_action;
   global $extend_wp_search_params;
-
   $extend_wp_search_params = $params;
   $extend_wp_search_action = true;
   $extend_wp_search_results = $this->construct_post_query();
