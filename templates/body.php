@@ -31,7 +31,7 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
       if ($extend_wp_search_parameters['clean_view'] == 1) {
 
       ?>
-        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo '<img src="' . $extend_wp_search_parameters['close_icon'] . '"/>'; ?></span></div>
+        <div class="search-icon"><span id="close-trigger" onclick="extend_wp_search_close_search();"><?php echo '<img src="' . $extend_wp_search_parameters['close_icon'] . '"/>'; ?></span></div>
       <?php
       }
       ?>
@@ -46,9 +46,9 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
         global $search_title;
         global $extend_wp_search_action;
         $extend_wp_search_action = false;
-        $search_title = __('Most popular articles', 'mtv-search');
-        $default_order = get_option('mtv_default_order') ?: 'publish_date';
-        $default_order_type = get_option('mtv_default_order_type') ?: 'ASC';
+        $search_title = __('Most popular articles', 'extend-wp-search');
+        $default_order = get_option('extend_wp_search_default_order') ?: 'publish_date';
+        $default_order_type = get_option('extend_wp_search_default_order_type') ?: 'ASC';
         $args = array(
           'post_type' => 'post',
           'post_status' => 'publish',

@@ -18,7 +18,7 @@ if (empty($extend_wp_search_results)) {
 ?>
   <div id="results-empty">
     <?php
-    echo __('Unfortunately, there are no results for your search. Please try once more with different criteria.', 'mtv-search');
+    echo __('Unfortunately, there are no results for your search. Please try once more with different criteria.', 'extend-wp-search');
     ?>
   </div>
 <?php

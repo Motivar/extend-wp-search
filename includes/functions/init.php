@@ -21,76 +21,76 @@ if (!function_exists('extend_wp_search_pages')) {
 
 
 
-if (!function_exists('mtv_admin_settings')) {
+if (!function_exists('extend_wp_search_admin_settings')) {
  /**
   * set the admin settings
   */
- function mtv_admin_settings()
+ function extend_wp_search_admin_settings()
  {
-  return apply_filters('mtv_admin_settings_filter', array(
+  return apply_filters('extend_wp_search_admin_settings_filter', array(
    'extend_wp_search_trigger_element' => array(
     'case' => 'input',
     'type' => 'text',
-    'label' => __('Element class/id to trigger search on click', 'mtv-search'),
-    'explanation' => __('valid query selector like #main,.class', 'mtv-search')
+    'label' => __('Element class/id to trigger search on click', 'extend-wp-search'),
+    'explanation' => __('valid query selector like #main,.class', 'extend-wp-search')
    ),
    'extend_wp_search_search_results_page' => array(
     'case' => 'input',
     'type' => 'text',
-    'label' => __('Search results page id', 'mtv-search'),
+    'label' => __('Search results page id', 'extend-wp-search'),
     'label_class' => array('awm-needed'),
-    'explanation' => __('The page where the results will be shown', 'mtv-search')
+    'explanation' => __('The page where the results will be shown', 'extend-wp-search')
    ),
    'extend_wp_search_include_script' => array(
     'case' => 'input',
     'type' => 'text',
-    'label' => __('Include scripts', 'mtv-search'),
-    'explanation' => __('Leave empty to include it everywhere, otherwise write the ids of the page, seperated by comma', 'mtv-search')
+    'label' => __('Include scripts', 'extend-wp-search'),
+    'explanation' => __('Leave empty to include it everywhere, otherwise write the ids of the page, seperated by comma', 'extend-wp-search')
    ),
    'extend_wp_search_img_id' => array(
     'case' => 'image',
-    'label' => __('Default featured image', 'mtv-search'),
+    'label' => __('Default featured image', 'extend-wp-search'),
    ),
    'extend_wp_search_post_types' => array(
-    'label' => __('Post types to search in', 'mtv-search'),
+    'label' => __('Post types to search in', 'extend-wp-search'),
     'case' => 'post_types',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
    'extend_wp_search_taxonomies' => array(
-    'label' => __('Taxonomies to filter', 'mtv-search'),
+    'label' => __('Taxonomies to filter', 'extend-wp-search'),
     'case' => 'taxonomies',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
-   'mtv_exclude_taxonomies' => array(
-    'label' => __('Taxonomies to exlude (ids)', 'mtv-search'),
+   'extend_wp_search_exclude_taxonomies' => array(
+    'label' => __('Taxonomies to exlude (ids)', 'extend-wp-search'),
     'case' => 'input',
     'type' => 'text',
    ),
    'extend_wp_search_years' => array(
-    'label' => __('Years', 'mtv-search'),
+    'label' => __('Years', 'extend-wp-search'),
     'case' => 'input',
     'type' => 'text',
-    'explanation' => __('Leave empty not to show date search. Use comma to separate years', 'mtv-search')
+    'explanation' => __('Leave empty not to show date search. Use comma to separate years', 'extend-wp-search')
    ),
-   'mtv_default_order' => array(
-    'label' => __('Default order', 'mtv-search'),
+   'extend_wp_search_default_order' => array(
+    'label' => __('Default order', 'extend-wp-search'),
     'case' => 'select',
     'removeEmpty' => true,
     'options' => array(
-     'publish_date' => array('label' => __('Publish date', 'mtv-search')),
-     'modified' => array('label' => __('Modified date', 'mtv-search')),
-     'title' => array('label' => __('Post title', 'mtv-search'))
+     'publish_date' => array('label' => __('Publish date', 'extend-wp-search')),
+     'modified' => array('label' => __('Modified date', 'extend-wp-search')),
+     'title' => array('label' => __('Post title', 'extend-wp-search'))
     ),
    ),
-   'mtv_default_order_type' => array(
-    'label' => __('Default order type', 'mtv-search'),
+   'extend_wp_search_default_order_type' => array(
+    'label' => __('Default order type', 'extend-wp-search'),
     'case' => 'select',
     'removeEmpty' => true,
     'options' => array(
-     'ASC' => array('label' => __('ASC', 'mtv-search')),
-     'DESC' => array('label' => __('DESC', 'mtv-search')),
+     'ASC' => array('label' => __('ASC', 'extend-wp-search')),
+     'DESC' => array('label' => __('DESC', 'extend-wp-search')),
 
     ),
    ),
@@ -126,7 +126,7 @@ add_shortcode('extend_wp_search', function ($atts) {
  if (empty($variables['taxonomies'])) {
   $variables['taxonomies'] = get_option('extend_wp_search_taxonomies') ?: array();
  }
- $variables['exclude_ids'] = get_option('mtv_exclude_taxonomies') ?: array();
+ $variables['exclude_ids'] = get_option('extend_wp_search_exclude_taxonomies') ?: array();
  if (empty($variables['years'])) {
   $variables['years'] = get_option('extend_wp_search_years') ?: array();
  }
@@ -172,14 +172,14 @@ if (!function_exists('extend_wp_search_get_translation')) {
 }
 
 
-if (!function_exists('mtv_seach_limit_text')) {
+if (!function_exists('extend_wp_search_seach_limit_text')) {
  /**
   * limits the text of a certain element
   * @param string $text 
   * @param int $limit how many words
   * @param boolean $strip  strip tags
   */
- function mtv_seach_limit_text($text, $limit = 10, $strip = false)
+ function extend_wp_search_seach_limit_text($text, $limit = 10, $strip = false)
  {
   if ($limit != 0) {
    if ($strip) {
@@ -258,7 +258,7 @@ if (!function_exists('extend_wp_search_prepare_filters')) {
    foreach ($years as $year) {
     $labels[$year] = array('label' => $year);
    }
-   $arrs['mtv_year'] = array(
+   $arrs['extend_wp_search_year'] = array(
     'label' => __('Year', 'motivar'),
     'case' => 'checkbox_multiple',
     'options' => $labels,

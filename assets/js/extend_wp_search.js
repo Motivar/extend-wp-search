@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
 
     liveSearch();
-    mtv_auto_trigger();
+    extend_wp_search_auto_trigger();
 
     jQuery(document).on('click', '#more-results-button', function() {
         jQuery('#search-full-screen form#mtv-search-form #submit').trigger('click');
@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 
 });
 
-function mtv_close_search() {
+function extend_wp_search_close_search() {
     jQuery('body').toggleClass('full-screen-open');
     jQuery('body').toggleClass('full-screen-open-left');
 }
@@ -66,7 +66,7 @@ function changeSearchContainer(wrap) {
     }
 }
 
-function mtv_auto_trigger() {
+function extend_wp_search_auto_trigger() {
     if (jQuery('#page #search_form').attr('data-trigger') == 1) {
         extend_wp_search();
     }
@@ -92,7 +92,7 @@ function extend_wp_search() {
 function extend_wp_search_query(container) {
 
     var loading = container + ' #search-results';
-    mtv_loading(loading, true),
+    extend_wp_search_loading(loading, true),
         jQuery.ajax({
             type: "GET",
             async: true,
@@ -100,14 +100,14 @@ function extend_wp_search_query(container) {
             data: jQuery(container + ' #mtv-search-form').serializeArray(),
             url: awmGlobals.url + "/wp-json/mtv-search/search/",
             success: function(response) {
-                mtv_loading(loading, false);
+                extend_wp_search_loading(loading, false);
                 jQuery(container + ' #search-results').html(response);
                 jQuery(document).trigger('extend_wp_search_results');
             }
         });
 }
 
-function mtv_loading(div, action) {
+function extend_wp_search_loading(div, action) {
 
     if (action) {
         jQuery(div).addClass('mtv-on-load');

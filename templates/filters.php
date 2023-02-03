@@ -9,9 +9,9 @@ global $extend_wp_search_parameters;
 </div>
 <div class="filters-actions">
         <div class="undo">
-                <div class="button" id="undo-checkboxes" onclick="disableCheckboxes();"><?php echo __('Remove filters', 'mtv-search'); ?></div>
+                <div class="button" id="undo-checkboxes" onclick="disableCheckboxes();"><?php echo __('Remove filters', 'extend-wp-search'); ?></div>
         </div>
         <div class="apply">
-                <div class="button" id="apply-checkboxes" onclick="newSearch();"><?php echo __('Apply filters', 'mtv-search'); ?></div>
+                <div class="button" id="apply-checkboxes" onclick="newSearch();"><?php echo __('Apply filters', 'extend-wp-search'); ?></div>
         </div>
 </div>

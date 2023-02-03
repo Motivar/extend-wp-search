@@ -1,15 +1,17 @@
 <?php
+
+namespace EWP_Search;
+
 if (!defined('ABSPATH')) {
  exit;
 }
 
-class extend_wp_search
+class Setup
 {
  public function __construct()
  {
-  require_once 'functions.php';
-  add_action('rest_api_init', array($this, 'mtv_rest_endpoints'));
-  add_filter('awm_add_options_boxes_filter', array($this, 'mtv_settings'), 100);
+  add_action('rest_api_init', array($this, 'extend_wp_search_rest_endpoints'));
+  add_filter('awm_add_options_boxes_filter', array($this, 'extend_wp_search_settings'), 100);
   add_action('init', array($this, 'registerScripts'), 10);
   add_action('wp', array($this, 'check_page'));
   add_filter('body_class', array($this, 'extend_wp_search_page_class'));
@@ -45,7 +47,7 @@ class extend_wp_search
   if ($all || in_array(get_the_ID(), $pages)) {
    add_action('wp_enqueue_scripts', array($this, 'addScripts'), 100);
    add_action('wp_footer', array($this, 'loading_effect'));
-   add_action('wp_body_open', array($this, 'mtv_add_hidden_divs'), 100);
+   add_action('wp_body_open', array($this, 'extend_wp_search_add_hidden_divs'), 100);
   }
  }
 
@@ -71,7 +73,7 @@ class extend_wp_search
 
 
 
- public function mtv_add_hidden_divs()
+ public function extend_wp_search_add_hidden_divs()
  {
   global $post;
   $pages = extend_wp_search_pages();
@@ -82,11 +84,12 @@ class extend_wp_search
  }
 
 
- public function mtv_settings($options)
+ public function extend_wp_search_settings($options)
  {
   $options['extend_wp_search_settings'] = array(
-   'title' => __('Mtv Search Settings', 'mtv-search'),
-   'callback' => 'mtv_admin_settings',
+   'parent' => 'extend-wp',
+   'title' => __('Search Interface', 'extend-wp-search'),
+   'callback' => 'extend_wp_search_admin_settings',
    'explanation' => __('Here you configure all the settings regarding the search functionallity. It is <b>important</b> to create a page with the shortocode [extend_wp_search results="1"] and declare it below.')
   );
   return $options;
@@ -103,10 +106,10 @@ class extend_wp_search
  /**
   * register rest endpoints
   */
- public function mtv_rest_endpoints()
+ public function extend_wp_search_rest_endpoints()
  {
   /*check here*/
-  register_rest_route('mtv-search', '/search', array(
+  register_rest_route('extend-wp-search', '/search', array(
    'methods' => 'GET',
    'callback' => array($this, 'extend_wp_search_results'),
   ));
@@ -144,8 +147,8 @@ class extend_wp_search
   global $extend_wp_search_params;
   $title = array();
   $tax_query = $meta_query = array();
-  $default_order = get_option('mtv_default_order') ?: 'publish_date';
-  $default_order_type = get_option('mtv_default_order_type') ?: 'DESC';
+  $default_order = get_option('extend_wp_search_default_order') ?: 'publish_date';
+  $default_order_type = get_option('extend_wp_search_default_order_type') ?: 'DESC';
   $args = array(
    'post_status' => 'publish',
    'suppress_filters' => false,
@@ -156,7 +159,7 @@ class extend_wp_search
   );
   if (isset($extend_wp_search_params['searchtext'])) {
    $args['s'] = sanitize_text_field($extend_wp_search_params['searchtext']);
-   $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($extend_wp_search_params['searchtext']) . '"</span>');
+   $title[] = sprintf(__('Results for %s', 'extend-wp-search'), '<span class="searched">"' . sanitize_text_field($extend_wp_search_params['searchtext']) . '"</span>');
   }
 
 
@@ -174,7 +177,7 @@ class extend_wp_search
       );
      $termTitle = array();
      if (isset($extend_wp_search_params['searchtext'])) {
-      $title[] = __('at', 'mtv-search');
+      $title[] = __('at', 'extend-wp-search');
      }
      foreach ($extend_wp_search_params[$key] as $term) {
       $termData = get_term($term, $key);
@@ -192,22 +195,19 @@ class extend_wp_search
    $args['tax_query'] = $tax_query;
   }
 
-  if (isset($extend_wp_search_params['mtv_year']) && !empty($extend_wp_search_params['mtv_year'])) {
+  if (isset($extend_wp_search_params['extend_wp_search_year']) && !empty($extend_wp_search_params['extend_wp_search_year'])) {
    $args['date_query'] = array(
     'relation' => 'OR',
    );
    $years = array();
-   foreach ($extend_wp_search_params['mtv_year'] as $year) {
+   foreach ($extend_wp_search_params['extend_wp_search_year'] as $year) {
     $args['date_query'][] = array('year' => $year);
     $years[] = $year;
    }
-   $title[] = sprintf(__('for the year(s) %s', 'mtv-search'), implode(', ', $years));
+   $title[] = sprintf(__('for the year(s) %s', 'extend-wp-search'), implode(', ', $years));
   }
   global $search_title;
   $search_title = implode(' ', $title);
   return get_posts($args);
  }
 }
-
-
-new extend_wp_search();
