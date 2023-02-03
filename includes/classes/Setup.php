@@ -253,7 +253,7 @@ class Setup
   $extend_wp_search_action = true;
   $extend_wp_search_results = $this->construct_post_query();
   $response = extend_wp_search_template_part('results.php');
-  return rest_ensure_response(new WP_REST_Response($response), 200);
+  return rest_ensure_response(new \WP_REST_Response($response), 200);
  }
  /**
   * construct the query based on the request

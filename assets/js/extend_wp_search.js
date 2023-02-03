@@ -98,7 +98,7 @@ function extend_wp_search_query(container) {
             async: true,
             cache: false,
             data: jQuery(container + ' #ewps-search-form').serializeArray(),
-            url: awmGlobals.url + "/wp-json/ewps-search/search/",
+            url: awmGlobals.url + "/wp-json/extend-wp-search/search/",
             success: function(response) {
                 extend_wp_search_loading(loading, false);
                 jQuery(container + ' #search-results').html(response);
