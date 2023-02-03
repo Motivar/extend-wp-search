@@ -1,0 +1,12 @@
+sftp-config.json
+/.vscode
+/.idea
+.vscode
+.idea
+vendor/
+**node_modules
+package.json
+package-lock.json
+*/node_modules/*
+/node_modules
+.DS_Store

@@ -1,0 +1,167 @@
+@import "../../../../themes/corfu_gr/sass/_variables.scss";
+@import "_contact.scss";
+body.admin-bar {}
+
+#page {
+    position: relative;
+}
+
+.awm-options-wrapper {
+    input[type="checkbox"],
+    input[type="radio"] {
+        display: none;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 20px;
+        width: 20px;
+        -webkit-appearance: none;
+        display: none;
+    }
+    .awm-multiple-checkbox .insider {
+        position: relative;
+        label {
+            cursor: pointer;
+            span {
+                display: flex;
+                position: relative;
+                align-items: center;
+                justify-content: flex-start;
+                margin-bottom: 20px;
+                height: 30px;
+            }
+            span:before,
+            span:after {
+                pointer-events: none;
+            }
+            span:before {
+                display: flex;
+                content: ' ';
+                height: 28px;
+                width: 28px;
+                border: solid 2px;
+                background: #fff;
+                margin-right: 10px;
+            }
+            span:after {
+                position: absolute;
+                top: 7px;
+                left: 7px;
+                display: flex;
+                content: ' ';
+                height: 12px;
+                width: 12px;
+                background: #000;
+                transform: scale(0);
+                transition: transform .3s ease;
+                top: 10px;
+            }
+            span:after {
+                height: 10px;
+                width: 18px;
+                left: 5px;
+                top: 8px;
+                border-bottom: solid 4px #000;
+                border-left: solid 4px #000;
+                background: none;
+                transform: rotate(-45deg) scale(0);
+                transition: transform .1s ease, opacity .1s ease;
+                transform-origin: center center;
+            }
+        }
+    }
+    .awm-multiple-checkbox .insider input[type="checkbox"]:checked+span:after {
+        opacity: 1;
+        transform: rotate(-45deg) scale(.8);
+    }
+}
+
+#ct-ultimate-gdpr-cookie-popup {
+    #ct-ultimate-gdpr-cookie-accept {
+        margin-top: 0px;
+    }
+    padding: 20px !important;
+    @media (#{$bp-smaller-than-tablet}) {
+        padding: 15px !important;
+    }
+    #ct-ultimate-gdpr-cookie-accept {
+        background-color: var(--mtv-search-secondary-color) !important;
+        border-color: var(--mtv-search-secondary-color) !important;
+    }
+    #ct-ultimate-gdpr-cookie-read-more {
+        color: var(--mtv-search-secondary-color);
+    }
+    >.ct-container {
+        display: table;
+        >div {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 0px;
+            float: none !important;
+            line-height: 18px;
+            &#ct-ultimate-gdpr-cookie-content {
+                width: 70%;
+                @media (#{$bp-smaller-than-tablet}) {
+                    text-align: center;
+                }
+            }
+            @media (#{$bp-smaller-than-tablet}) {
+                display: block;
+                width: 100% !important;
+            }
+        }
+    }
+}
+
+.mtv-custom-table {
+    width: 95%;
+    padding: 20px;
+    position: relative;
+    font-size: 100%;
+    border-spacing: 2px;
+    margin: 0 auto;
+    td {
+        border: solid 1px black;
+        padding: 5px;
+        &.big-row {
+            font-weight: 600;
+        }
+        img {
+            max-height: 70px;
+            position: relative;
+            margin: 0 auto;
+            display: block;
+        }
+    }
+}
+
+#content {
+    main#primary {
+        position: relative;
+        margin-bottom: 40px;
+    }
+    #page-main-content {
+        width: 95%;
+        margin: 0 auto;
+        p {
+            font-family: regular;
+        }
+    }
+}
+
+.breadcrumb_last {
+    font-family: bold_font;
+}
+
+.right_section {
+    .widget_media_image {
+        img,
+        svg {
+            display: block;
+            margin: 0 auto;
+            // max-height: 100px;
+            //  max-width: 220px !important;
+            width: auto;
+        }
+    }
+}

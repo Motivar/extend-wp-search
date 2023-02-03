@@ -1,0 +1,28 @@
+{
+    "name": "motivar/extend-wp-search",
+    "version": "0.1",
+    "description": " Extend WP Search Interface",
+    "license": "GPL-2.0-or-later",
+    "keywords": ["custom-fields", "advanced-custom-fields", "wordpress"],
+    "homepage": "https://motivar.io/",
+    "type": "wordpress-plugin",
+    "authors": [{
+        "name": "Motivar",
+        "email": "info@motivar.cio"
+    }],
+    "config": {
+        "vendor-dir": "lib",
+        "optimize-autoloader": true,
+        "apcu-autoloader": true
+    },
+    "support": {
+        "issues": "https://motivar.io/"
+    },
+    "autoload": {
+        "psr-4": {
+            "EWP_Search\\": "includes/classes/"
+        },
+        "files": ["includes/functions/init.php"]
+    }
+
+}
