@@ -4,11 +4,11 @@ $yellow: #E59500;
 $white: white;
 $grey: #F2F4F5;
 :root {
-    --mtv-search-main-color: #{$blue};
-    --mtv-search-secondary-color:#{$red};
-    --mtv-search-third-color:#{$yellow};
-    --mtv-search-fourth-color:#{$white};
-    --mtv-search-fifth-color:#{$grey};
+    --ewps-search-main-color: #{$blue};
+    --ewps-search-secondary-color:#{$red};
+    --ewps-search-third-color:#{$yellow};
+    --ewps-search-fourth-color:#{$white};
+    --ewps-search-fifth-color:#{$grey};
 }
 
 $bp-larger-than-mobile: "min-width: 400px" !default;
@@ -21,10 +21,7 @@ $bp-larger-than-desktop: "min-width: 1000px" !default;
 $bp-larger-than-desktophd: "min-width: 1200px" !default;
 $bp-larger-than-desktophd-plus: "min-width: 1300px" !default;
 .trans {
-    -ms-transition: all .2s ease !important;
-    -moz-transition: all .2s ease !important;
-    -o-transition: all .2s ease !important;
-    -webkit-transition: all .2s ease !important;
+    transition: all .2s ease !important;
 }
 
 .abs {

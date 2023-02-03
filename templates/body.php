@@ -16,7 +16,7 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
 
 ?>
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
-  <form id="mtv-search-form" method="get" action="<?php echo $extend_wp_search_parameters['action'] ?>">
+  <form id="ewps-search-form" method="get" action="<?php echo $extend_wp_search_parameters['action'] ?>">
 
     <div class="search-bar <?php echo implode(' ', $extend_wp_search_parameters['main-class']); ?>">
       <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text" placeholder="<?php echo $extend_wp_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>

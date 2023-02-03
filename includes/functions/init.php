@@ -146,7 +146,7 @@ if (!function_exists('extend_wp_search_template_part')) {
   */
  function extend_wp_search_template_part($file)
  {
-  $template_over_write = get_stylesheet_directory() . '/templates/mtv-search/' . $file;
+  $template_over_write = get_stylesheet_directory() . '/templates/ewps-search/' . $file;
   $file = file_exists($template_over_write) ? $template_over_write : extend_wp_search_path . 'templates/' . $file;
   ob_start();
   include $file;

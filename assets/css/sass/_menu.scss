@@ -19,7 +19,7 @@
         }
     }
     .menu-wrapper {
-        background: var(--mtv-search-fifth-color);
+        background: var(--ewps-search-fifth-color);
         padding: 20px;
         min-height: 20vh;
         height: auto;
@@ -35,7 +35,7 @@
         .menu-tab {
             float: left;
             height: 100%;
-            border-right: solid 2px var(--mtv-search-third-color);
+            border-right: solid 2px var(--ewps-search-third-color);
             @media (#{$bp-smaller-than-tablet}) {
                 border-right: none;
                 display: grid;
@@ -46,7 +46,7 @@
         .menu-tab button {
             display: block;
             background-color: inherit;
-            color: var(--mtv-search-main-color);
+            color: var(--ewps-search-main-color);
             padding: 20px 10px;
             width: 100%;
             border: none;
@@ -56,16 +56,16 @@
             transition: all 0.6s cubic-bezier(0.65, 0, 0.35, 1);
             font-size: 130%;
             @media (#{$bp-smaller-than-tablet}) {
-                border-bottom: solid 2px var(--mtv-search-fifth-color);
+                border-bottom: solid 2px var(--ewps-search-fifth-color);
                 padding: 10px;
             }
             &:hover,
             &.active {
-                color: var(--mtv-search-secondary-color);
+                color: var(--ewps-search-secondary-color);
             }
             &.active {
                 @media (#{$bp-smaller-than-tablet}) {
-                    border-bottom: solid 2px var(--mtv-search-third-color);
+                    border-bottom: solid 2px var(--ewps-search-third-color);
                 }
             }
         }
@@ -103,7 +103,7 @@
                     }
                 }
                 h2 {
-                    color: var(--mtv-search-third-color);
+                    color: var(--ewps-search-third-color);
                     font-size: 140%;
                     margin-bottom: 10px;
                     margin-top: 5px;
@@ -128,7 +128,7 @@
             text-align: center;
             .social {
                 display: inline-block;
-                color: var(--mtv-search-main-color);
+                color: var(--ewps-search-main-color);
                 font-size: 30px;
                 margin: 10px;
             }

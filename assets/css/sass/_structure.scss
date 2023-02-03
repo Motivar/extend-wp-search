@@ -27,7 +27,7 @@ body.full-screen-open {
             right: 0px;
             background: white !important;
             span.hamburger-label-close {
-                color: var(--mtv-search-secondary-color) !important;
+                color: var(--ewps-search-secondary-color) !important;
             }
         }
     }
@@ -39,7 +39,7 @@ body.full-screen-open {
     height: 100%;
     transition: all 0.6s cubic-bezier(0.65, 0, 0.35, 1);
     z-index: -1;
-    background: var(--mtv-search-main-color);
+    background: var(--ewps-search-main-color);
     &.right {
         background: white !important;
     }

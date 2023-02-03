@@ -4,7 +4,7 @@ jQuery(document).ready(function() {
     extend_wp_search_auto_trigger();
 
     jQuery(document).on('click', '#more-results-button', function() {
-        jQuery('#search-full-screen form#mtv-search-form #submit').trigger('click');
+        jQuery('#search-full-screen form#ewps-search-form #submit').trigger('click');
     });
     if (extend_wp_search_vars.trigger !== '') {
         jQuery(document).on('click', extend_wp_search_vars.trigger, function() {
@@ -97,8 +97,8 @@ function extend_wp_search_query(container) {
             type: "GET",
             async: true,
             cache: false,
-            data: jQuery(container + ' #mtv-search-form').serializeArray(),
-            url: awmGlobals.url + "/wp-json/mtv-search/search/",
+            data: jQuery(container + ' #ewps-search-form').serializeArray(),
+            url: awmGlobals.url + "/wp-json/ewps-search/search/",
             success: function(response) {
                 extend_wp_search_loading(loading, false);
                 jQuery(container + ' #search-results').html(response);
@@ -110,11 +110,11 @@ function extend_wp_search_query(container) {
 function extend_wp_search_loading(div, action) {
 
     if (action) {
-        jQuery(div).addClass('mtv-on-load');
-        var html = jQuery("#mtv-loading").html();
+        jQuery(div).addClass('ewps-on-load');
+        var html = jQuery("#ewps-loading").html();
         jQuery(div).html(html);
     } else {
-        jQuery(div).removeClass('mtv-on-load');
+        jQuery(div).removeClass('ewps-on-load');
         jQuery(div + " .loading-wrapper").fadeOut('slow');
     }
 }
@@ -125,7 +125,7 @@ function disableCheckboxes() {
     if (!fullScreen) {
         container = '#page-main-content';
     }
-    jQuery(container + ' #mtv-search-form input[type="checkbox"]').prop("checked", false);
+    jQuery(container + ' #ewps-search-form input[type="checkbox"]').prop("checked", false);
     changeSearchContainer(jQuery(container + ' #filter-trigger'));
     extend_wp_search();
 }

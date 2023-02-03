@@ -85,11 +85,11 @@ body.admin-bar {}
         padding: 15px !important;
     }
     #ct-ultimate-gdpr-cookie-accept {
-        background-color: var(--mtv-search-secondary-color) !important;
-        border-color: var(--mtv-search-secondary-color) !important;
+        background-color: var(--ewps-search-secondary-color) !important;
+        border-color: var(--ewps-search-secondary-color) !important;
     }
     #ct-ultimate-gdpr-cookie-read-more {
-        color: var(--mtv-search-secondary-color);
+        color: var(--ewps-search-secondary-color);
     }
     >.ct-container {
         display: table;
@@ -113,7 +113,7 @@ body.admin-bar {}
     }
 }
 
-.mtv-custom-table {
+.ewps-custom-table {
     width: 95%;
     padding: 20px;
     position: relative;
