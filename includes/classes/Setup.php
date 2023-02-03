@@ -17,7 +17,47 @@ class Setup
   add_filter('body_class', array($this, 'extend_wp_search_page_class'));
   add_filter('awm_add_customizer_settings_filter', [$this, 'register']);
   add_action('wp_enqueue_scripts', [$this, 'inline_styles'], 20);
+  add_shortcode('extend_wp_search', array($this, 'extend_wp_search_shortcode'));
  }
+
+
+ public function extend_wp_search_shortcode($atts)
+ {
+  $variables = shortcode_atts(array(
+   'method' => 'get',
+   'clean_view' => '0',
+   'post_types' => array(),
+   'taxonomies' => array(),
+   'action' => '',
+   'years' => array(),
+   'results' => 0,
+   'placeholder' => __('Search', 'motivar-search'),
+   'filter_icon' => extend_wp_search_url . 'assets/img/filter.svg',
+   'close_icon' => extend_wp_search_url . 'assets/img/close.svg',
+   'search_icon' => extend_wp_search_url . 'assets/img/search.svg',
+  ), $atts);
+  $variables['action'] = get_permalink(extend_wp_search_get_translation(get_option('extend_wp_search_search_results_page')));
+  $variables['method'] = 'post';
+  $variables['main-class'] = array();
+  $variables['main-class'][] = $variables['results'] == 1 ? 'show-filter' : '';
+  $variables['main-class'][] = $variables['clean_view'] == 1 ? 'show-close' : '';
+  if (empty($variables['post_types'])) {
+   $variables['post_types'] = get_option('extend_wp_search_post_types') ?: array();
+  }
+  if (empty($variables['taxonomies'])) {
+   $variables['taxonomies'] = get_option('extend_wp_search_taxonomies') ?: array();
+  }
+  $variables['exclude_ids'] = get_option('extend_wp_search_exclude_taxonomies') ?: array();
+  if (empty($variables['years'])) {
+   $variables['years'] = get_option('extend_wp_search_years') ?: array();
+  }
+
+
+  global $extend_wp_search_parameters;
+  $extend_wp_search_parameters = $variables;
+  return extend_wp_search_template_part('body.php');
+ }
+
 
  /**
   * Customizer & frontend custom color variables.
