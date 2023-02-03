@@ -27,7 +27,6 @@ class Setup
  public function inline_styles()
  {
   wp_add_inline_style('ewps-search-style', $this->generate_inline_style());
-  echo 'nikos';
  }
  public  function register($boxes)
  {
