@@ -1,16 +1,3 @@
-$blue: #002642;
-$red: #840032;
-$yellow: #E59500;
-$white: white;
-$grey: #F2F4F5;
-:root {
-    --ewps-search-main-color: #{$blue};
-    --ewps-search-secondary-color:#{$red};
-    --ewps-search-third-color:#{$yellow};
-    --ewps-search-fourth-color:#{$white};
-    --ewps-search-fifth-color:#{$grey};
-}
-
 $bp-larger-than-mobile: "min-width: 400px" !default;
 $bp-larger-than-phablet: "min-width: 550px" !default;
 $bp-smaller-than-phablet: "max-width: 550px" !default;

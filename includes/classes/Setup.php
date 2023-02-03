@@ -15,6 +15,73 @@ class Setup
   add_action('init', array($this, 'registerScripts'), 10);
   add_action('wp', array($this, 'check_page'));
   add_filter('body_class', array($this, 'extend_wp_search_page_class'));
+  add_filter('awm_add_customizer_settings_filter', [$this, 'register']);
+  add_action('wp_enqueue_scripts', [$this, 'inline_styles'], 20);
+ }
+
+ /**
+  * Customizer & frontend custom color variables.
+  *
+  * @return void
+  */
+ public function inline_styles()
+ {
+  wp_add_inline_style('ewps-search-style', $this->generate_inline_style());
+  echo 'nikos';
+ }
+ public  function register($boxes)
+ {
+  $boxes['filox'] =
+   array(
+    'title' => __('EWP Search Interface', 'filox'),
+    'priority' => 100,
+    'sections' => array(
+     'flx_colors' => array(
+      'title' => __('Colors', 'filox'),
+      'description' => __('Set colors/font sizes etc ', 'filox'),
+      'priority' => 10,
+      'capability' => 'edit_theme_options',
+      'library' => $this->customizer_settings()
+     )
+    )
+   );
+  return $boxes;
+ }
+
+ public function customizer_settings()
+ {
+  return array(
+   'main-color' => array(
+    'label'   => __('Main Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#002642', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'secondary-color' => array(
+    'label'   => __('Secondary Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#840032', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'third-color' => array(
+    'label'   => __('Third Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#E59500', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'fourth-color' => array(
+    'label'   => __('Fourth Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#ffffff', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'fifth-color' => array(
+    'label'   => __('Fifth Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#F2F4F5', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+  );
  }
 
  public function extend_wp_search_page_class($classes)
@@ -66,11 +133,22 @@ class Setup
   */
  public function addScripts()
  {
+
   wp_enqueue_style('ewps-search-style');
   wp_localize_script('ewps-search-script', 'extend_wp_search_vars', apply_filters('extend_wp_search_vars_filter', array('trigger' => get_option('extend_wp_search_trigger_element'))));
   wp_enqueue_script('ewps-search-script');
  }
 
+ public function generate_inline_style()
+ {
+  $all_options = $this->customizer_settings();
+  $properties = array();
+  foreach ($all_options as $key => $value) {
+   $value = get_theme_mod($key, $value['attributes']['customizer_default']);
+   $properties[] = '--ewps-search-' . $key . ':' . $value . ';';
+  }
+  return ':root{' . implode('', $properties) . '}';
+ }
 
 
  public function extend_wp_search_add_hidden_divs()
