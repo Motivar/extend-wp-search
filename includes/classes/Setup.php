@@ -25,7 +25,7 @@ class Setup
  {
   $variables = shortcode_atts(array(
    'method' => 'get',
-   'clean_view' => '0',
+   'clean_view' => false,
    'post_types' => array(),
    'taxonomies' => array(),
    'action' => '',
