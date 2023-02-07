@@ -25,7 +25,7 @@ class Setup
  {
   $variables = shortcode_atts(array(
    'method' => 'get',
-   'clean_view' => false,
+   'clean_view' => true,
    'post_types' => array(),
    'taxonomies' => array(),
    'action' => '',
@@ -162,9 +162,9 @@ class Setup
   */
  public function registerScripts()
  {
-
-  wp_register_script('ewps-search-script', extend_wp_search_url . 'assets/js/extend_wp_search.js', array(), false, 1);
-  wp_register_style('ewps-search-style', extend_wp_search_url . 'assets/css/full-screen.min.css', false, '1.0.0');
+  $version = '1.0.0';
+  wp_register_script('ewps-search-script', extend_wp_search_url . 'assets/js/extend_wp_search.js', array(), false, $version);
+  wp_register_style('ewps-search-style', extend_wp_search_url . 'assets/css/full-screen.min.css', false, $version);
  }
 
  /**
