@@ -212,9 +212,6 @@
                          color: var(--ewps-search-secondary-color);
                      }
                  }
-                 .text {
-                     font-family: regular;
-                 }
                  @media (#{$bp-smaller-than-phablet}) {
                      grid-template-columns: 1fr;
                      .featured {
