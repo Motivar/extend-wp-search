@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'EWP_Search\\Setup' => $baseDir . '/includes/classes/Setup.php',
 );

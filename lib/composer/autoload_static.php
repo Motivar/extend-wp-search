@@ -26,6 +26,7 @@ class ComposerStaticInit76d963423bfeec46cd12099c48bde84b
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'EWP_Search\\Setup' => __DIR__ . '/../..' . '/includes/classes/Setup.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

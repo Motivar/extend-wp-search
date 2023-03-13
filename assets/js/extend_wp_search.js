@@ -54,7 +54,7 @@ function changeSearchContainer(wrap) {
     var fullScreen = jQuery('body').hasClass('full-screen-open');
     var container = '#search-full-screen';
     if (!fullScreen) {
-        container = '#page';
+        container = 'body.page';
     }
     jQuery(container + ' #' + id).toggleClass('active');
     switch (id) {
@@ -67,7 +67,7 @@ function changeSearchContainer(wrap) {
 }
 
 function extend_wp_search_auto_trigger() {
-    if (jQuery('#page #search_form').attr('data-trigger') == 1) {
+    if (jQuery('body.page #search_form').attr('data-trigger') == 1) {
         extend_wp_search();
     }
 }
@@ -77,7 +77,7 @@ function extend_wp_search() {
     var container = '#search-full-screen';
 
     if (!fullScreen) {
-        container = '#page';
+        container = 'body.page';
 
 
     }
@@ -123,7 +123,7 @@ function disableCheckboxes() {
     var fullScreen = jQuery('body').hasClass('full-screen-open');
     var container = '#search-full-screen';
     if (!fullScreen) {
-        container = '#page-main-content';
+        container = 'body.page';
     }
     jQuery(container + ' #ewps-search-form input[type="checkbox"]').prop("checked", false);
     changeSearchContainer(jQuery(container + ' #filter-trigger'));
@@ -134,7 +134,7 @@ function newSearch() {
     var fullScreen = jQuery('body').hasClass('full-screen-open');
     var container = '#search-full-screen';
     if (!fullScreen) {
-        container = '#page-main-content';
+        container = 'body.page';
     }
     changeSearchContainer(jQuery(container + ' #filter-trigger'));
     extend_wp_search();
