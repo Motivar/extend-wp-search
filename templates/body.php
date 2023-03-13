@@ -7,7 +7,6 @@ $autotrigger = $searchtext != '' ? 1 : 0;
 $number = $autotrigger == 1 ? -1 : 15;
 if ($extend_wp_search_parameters['clean_view'] == 1) {
   $number = 15;
-  $searchtext = '';
 }
 $extend_wp_search_parameters['number'] = $number;
 $hidden_inputs = extend_wp_search_hidden_inputs($extend_wp_search_parameters);
