@@ -20,7 +20,7 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
 
     <div class="search-bar <?php echo implode(' ', $extend_wp_search_parameters['main-class']); ?>">
       <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text" placeholder="<?php echo $extend_wp_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
-      <div class="search-icon"><span id="search-trigger" onclick="extend_wp_search();"><?php echo '<img src="' . $extend_wp_search_parameters['search_icon'] . '"/>'; ?></span></div>
+      <div class="search-icon"><span id="search-trigger" onclick="extend_wp_search_click();"><?php echo '<img src="' . $extend_wp_search_parameters['search_icon'] . '"/>'; ?></span></div>
 
       <?php
       if (!empty($extend_wp_search_parameters['filters'])) {

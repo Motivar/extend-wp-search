@@ -72,6 +72,10 @@ function extend_wp_search_auto_trigger() {
     }
 }
 
+function extend_wp_search_click() {
+    extend_wp_search();
+}
+
 function extend_wp_search() {
     var fullScreen = jQuery('body').hasClass('full-screen-open');
     var container = '#search-full-screen';
