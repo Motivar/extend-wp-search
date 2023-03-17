@@ -5,7 +5,8 @@ global $extend_wp_search_archive_option;
 $searchtext = isset($_REQUEST['searchtext']) ? sanitize_text_field($_REQUEST['searchtext']) : '';
 $autotrigger = $searchtext != '' ? 1 : 0;
 $number = $autotrigger == 1 ? -1 : 15;
-if ($extend_wp_search_parameters['clean_view'] == 1) {
+
+if ($extend_wp_search_parameters['clean_view'] == 1 && empty($searchtext)) {
   $number = 15;
 }
 $extend_wp_search_parameters['number'] = $number;
