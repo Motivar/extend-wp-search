@@ -1,13 +1,19 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
 
     liveSearch();
     extend_wp_search_auto_trigger();
 
-    jQuery(document).on('click', '#more-results-button', function() {
+    jQuery(document).on('click', '#more-results-button', function () {
         jQuery('#search-full-screen form#ewps-search-form #submit').trigger('click');
     });
     if (extend_wp_search_vars.trigger !== '') {
-        jQuery(document).on('click', extend_wp_search_vars.trigger, function() {
+        jQuery(document).on('click', extend_wp_search_vars.trigger, function () {
+            if (jQuery('body').hasClass('ewps-search-page-results')) {
+                jQuery([document.documentElement, document.body]).animate({
+                    scrollTop: jQuery("#search_form").offset().top - 200
+                }, 300);
+                return;
+            }
             jQuery('body').toggleClass('full-screen-open');
             jQuery('body').toggleClass('full-screen-open-left');
         });
@@ -21,7 +27,7 @@ function extend_wp_search_close_search() {
 }
 
 function liveSearch() {
-    jQuery(document).on('keypress', 'input[name="searchtext"]', function(e) {
+    jQuery(document).on('keypress', 'input[name="searchtext"]', function (e) {
 
         if (e.which == 13) {
             e.preventDefault();
@@ -38,13 +44,13 @@ function liveSearch() {
     var $input = jQuery('input[name="searchtext"]');
 
     //on keyup, start the countdown
-    $input.on('keyup', function() {
+    $input.on('keyup', function () {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(extend_wp_search, doneTypingInterval);
     });
 
     //on keydown, clear the countdown 
-    $input.on('keydown', function() {
+    $input.on('keydown', function () {
         clearTimeout(typingTimer);
     });
 }
@@ -103,7 +109,7 @@ function extend_wp_search_query(container) {
             cache: false,
             data: jQuery(container + ' #ewps-search-form').serializeArray(),
             url: awmGlobals.url + "/wp-json/extend-wp-search/search/",
-            success: function(response) {
+            success: function (response) {
                 extend_wp_search_loading(loading, false);
                 jQuery(container + ' #search-results').html(response);
                 jQuery(document).trigger('extend_wp_search_results');

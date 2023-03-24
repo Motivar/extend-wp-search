@@ -167,7 +167,7 @@ class Setup
   */
  public function registerScripts()
  {
-  $version = 0.1;
+  $version = 0.2;
   wp_register_script('ewps-search-script', extend_wp_search_url . 'assets/js/extend_wp_search.js', array(), false, $version);
   wp_register_style('ewps-search-style', extend_wp_search_url . 'assets/css/full-screen.min.css', false, $version);
  }
