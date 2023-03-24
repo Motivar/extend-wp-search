@@ -36,6 +36,11 @@ class Setup
    'close_icon' => extend_wp_search_url . 'assets/img/close.svg',
    'search_icon' => extend_wp_search_url . 'assets/img/search.svg',
   ), $atts);
+  global $post;
+  $pages = extend_wp_search_pages();
+  if (in_array($post->ID, $pages)) {
+   $variables['clean_view'] = false;
+  }
   $variables['action'] = get_permalink(extend_wp_search_get_translation(get_option('extend_wp_search_search_results_page')));
   $variables['method'] = 'post';
   $variables['main-class'] = array();

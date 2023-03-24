@@ -2,10 +2,12 @@
 if (!defined('ABSPATH')) exit;
 global $extend_wp_search_parameters;
 global $extend_wp_search_archive_option;
+global $post;
 $searchtext = isset($_REQUEST['searchtext']) ? sanitize_text_field($_REQUEST['searchtext']) : '';
 $autotrigger = $searchtext != '' ? 1 : 0;
 $number = $autotrigger == 1 ? -1 : 15;
 
+$pages = extend_wp_search_pages();
 if ($extend_wp_search_parameters['clean_view'] == 1 && empty($searchtext)) {
   $number = 15;
 }
@@ -16,29 +18,37 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
 
 ?>
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
-  <form id="ewps-search-form" method="get" action="<?php echo $extend_wp_search_parameters['action'] ?>">
+ <form id="ewps-search-form" method="get" action="<?php echo $extend_wp_search_parameters['action'] ?>">
 
-    <div class="search-bar <?php echo implode(' ', $extend_wp_search_parameters['main-class']); ?>">
-      <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text" placeholder="<?php echo $extend_wp_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
-      <div class="search-icon"><span id="search-trigger" onclick="extend_wp_search_click();"><?php echo '<img src="' . $extend_wp_search_parameters['search_icon'] . '"/>'; ?></span></div>
+  <div class="search-bar <?php echo implode(' ', $extend_wp_search_parameters['main-class']); ?>">
+   <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text"
+     placeholder="<?php echo $extend_wp_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext"
+     class="highlight" value="<?php echo $searchtext; ?>"
+     required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
+   <div class="search-icon"><span id="search-trigger"
+     onclick="extend_wp_search_click();"><?php echo '<img src="' . $extend_wp_search_parameters['search_icon'] . '"/>'; ?></span>
+   </div>
 
-      <?php
+   <?php
       if (!empty($extend_wp_search_parameters['filters'])) {
       ?>
-        <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo '<img src="' . $extend_wp_search_parameters['filter_icon'] . '"/>'; ?></span></div>
-      <?
+   <div class="search-icon"><span id="filter-trigger"
+     onclick="changeSearchContainer(this);"><?php echo '<img src="' . $extend_wp_search_parameters['filter_icon'] . '"/>'; ?></span>
+   </div>
+   <?php
       }
-      if ($extend_wp_search_parameters['clean_view'] == 1) {
-
+      if ($extend_wp_search_parameters['clean_view']) {
       ?>
-        <div class="search-icon"><span id="close-trigger" onclick="extend_wp_search_close_search();"><?php echo '<img src="' . $extend_wp_search_parameters['close_icon'] . '"/>'; ?></span></div>
-      <?php
+   <div class="search-icon"><span id="close-trigger"
+     onclick="extend_wp_search_close_search();"><?php echo '<img src="' . $extend_wp_search_parameters['close_icon'] . '"/>'; ?></span>
+   </div>
+   <?php
       }
       ?>
-    </div>
+  </div>
 
 
-    <?php
+  <?php
     if ($extend_wp_search_parameters['results'] == 1) {
 
       if (!isset($_REQUEST['searchtext'])) {
@@ -75,24 +85,24 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
 
 
     ?>
-      <div id="search_form_body">
-        <div id="search_form_resutls" class="active">
-          <div id="search-results">
-            <?php echo extend_wp_search_template_part('results.php'); ?>
-          </div>
-        </div>
-        <?php if (!empty($extend_wp_search_parameters['filters'])) {
+  <div id="search_form_body">
+   <div id="search_form_resutls" class="active">
+    <div id="search-results">
+     <?php echo extend_wp_search_template_part('results.php'); ?>
+    </div>
+   </div>
+   <?php if (!empty($extend_wp_search_parameters['filters'])) {
         ?>
-          <div id="search_form_filter">
-            <?php echo extend_wp_search_template_part('filters.php'); ?>
-          </div>
-        <?php
+   <div id="search_form_filter">
+    <?php echo extend_wp_search_template_part('filters.php'); ?>
+   </div>
+   <?php
         } ?>
 
-      </div>
-    <?php
+  </div>
+  <?php
     }
     ?>
-    <input type="submit" id="submit" value="submit">
-  </form>
+  <input type="submit" id="submit" value="submit">
+ </form>
 </div>
