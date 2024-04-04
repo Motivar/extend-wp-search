@@ -38,7 +38,7 @@ class Setup
   ), $atts);
   global $post;
   $pages = extend_wp_search_pages();
-  if (in_array($post->ID, $pages)) {
+  if ($post && isset($post->ID) && in_array($post->ID, $pages)) {
    $variables['clean_view'] = false;
   }
   $variables['action'] = get_permalink(extend_wp_search_get_translation(get_option('extend_wp_search_search_results_page')));
@@ -199,7 +199,7 @@ class Setup
  {
   global $post;
   $pages = extend_wp_search_pages();
-  if (in_array($post->ID, $pages)) {
+  if ($post && isset($post->ID) &&  in_array($post->ID, $pages)) {
    return;
   }
   echo extend_wp_search_template_part('search-full-screen.php');
