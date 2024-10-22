@@ -61,7 +61,6 @@ if (!function_exists('extend_wp_search_admin_settings')) {
     'label' => __('Taxonomies to filter', 'extend-wp-search'),
     'case' => 'taxonomies',
     'attributes' => array('multiple' => true),
-    'label_class' => array('awm-needed'),
    ),
    'extend_wp_search_exclude_taxonomies' => array(
     'label' => __('Taxonomies to exlude (ids)', 'extend-wp-search'),
@@ -109,7 +108,8 @@ if (!function_exists('extend_wp_search_template_part')) {
   */
  function extend_wp_search_template_part($file)
  {
-  $template_over_write = get_stylesheet_directory() . '/templates/ewps-search/' . $file;
+  $active_theme = apply_filters('ewps_active_theme_folder_filter', get_stylesheet_directory());
+  $template_over_write = $active_theme . '/templates/ewp-search/' . $file;
   $file = file_exists($template_over_write) ? $template_over_write : extend_wp_search_path . 'templates/' . $file;
   ob_start();
   include $file;
@@ -230,4 +230,60 @@ if (!function_exists('extend_wp_search_prepare_filters')) {
   }
   return $arrs;
  }
+}
+
+
+
+/**
+ * Function to safely load and embed SVG content into HTML
+ *
+ * @param string $svg_file_path Path to the SVG file.
+ * @return string Sanitized SVG content.
+ */
+function ewps_inject_svg($svg_file_path)
+{
+ // Check if the file exists and is readable
+ if (file_exists($svg_file_path) && is_readable($svg_file_path)) {
+  // Get the SVG content
+  $svg_content = file_get_contents($svg_file_path);
+
+  // Sanitize the SVG (ensure no harmful code is injected)
+  $allowed_tags = ['svg', 'path', 'rect', 'circle', 'line', 'polygon', 'polyline', 'g']; // Add more tags as necessary
+  $allowed_attributes = ['xmlns', 'viewBox', 'fill', 'stroke', 'd', 'id', 'class', 'line', 'stroke-linejoin', 'stroke-linecap', 'stroke-width', 'x1', 'x2', 'y1', 'y2']; // Add more attributes as necessary
+
+  // Remove any script or foreign objects inside the SVG
+  $svg_content = wp_kses($svg_content, [
+   'svg' => array_flip($allowed_attributes),
+   'path' => array_flip($allowed_attributes),
+   'line' => array_flip($allowed_attributes),
+   'rect' => array_flip($allowed_attributes),
+   'circle' => array_flip($allowed_attributes),
+   // Add other tags and attributes here as necessary
+  ]);
+
+  return $svg_content; // Return the sanitized SVG content
+ }
+
+ return ''; // Return empty string if file does not exist
+}
+
+/**
+ * Function to display an image or inline SVG depending on the file type
+ *
+ * @param string $image_url The URL of the image.
+ * @return string HTML output with either the inline SVG or an img tag.
+ */
+function ewps_display_image_or_svg($image_url)
+{
+ // Check if the URL is pointing to an SVG
+ if (strpos($image_url, '.svg') !== false) {
+  // Get the path to the SVG file
+  $svg_file_path = str_replace(home_url(), ABSPATH, $image_url);
+
+  // Inject the SVG inline
+  return ewps_inject_svg($svg_file_path);
+ }
+
+ // Return the image tag for non-SVG images
+ return '<img src="' . esc_url($image_url) . '" alt="Icon"/>';
 }

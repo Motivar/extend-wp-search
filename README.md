@@ -10,5 +10,7 @@ A simple UI interface to make a search engine for WP
 ```bash
 [extend_wp_search results="1"]
 ```
+3. Go to extend wp -> search interface (explain all settings)
 
-2. Configure the options and include the page id above
+4. If you would like to overwrite the templates add to your active theme the path templates/ewp-search/
+

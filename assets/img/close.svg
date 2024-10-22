@@ -1,3 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="36.3" height="36.3" viewBox="0 0 36.3 36.3">
-  <path id="Icon_material-close" data-name="Icon material-close" d="M43.8,11.156,40.144,7.5,25.65,21.994,11.156,7.5,7.5,11.156,21.994,25.65,7.5,40.144,11.156,43.8,25.65,29.306,40.144,43.8,43.8,40.144,29.306,25.65Z" transform="translate(-7.5 -7.5)" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="30.621" height="30.621" viewBox="0 0 30.621 30.621">
+  <g id="Icon_feather-close" data-name="Icon feather-close" transform="translate(-3 -3)">
+    <line x1="6" y1="6" x2="30" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="30" y1="6" x2="6" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

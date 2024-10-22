@@ -6,7 +6,7 @@ Description: Simple stylish search powered with awm
 Version: 0.1
 Author: Giannopoulos Nikolaos
 Author URI: https://motivar.io
-Text Domain: extensd-wp-search
+Text Domain: extend-wp-search
  */
 
 if (!defined('WPINC')) {

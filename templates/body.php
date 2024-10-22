@@ -26,21 +26,21 @@ $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($exte
      class="highlight" value="<?php echo $searchtext; ?>"
      required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
    <div class="search-icon"><span id="search-trigger"
-     onclick="extend_wp_search_click();"><?php echo '<img src="' . $extend_wp_search_parameters['search_icon'] . '"/>'; ?></span>
+     onclick="extend_wp_search_click();"><?php echo ewps_display_image_or_svg($extend_wp_search_parameters['search_icon']);  ?></span>
    </div>
 
    <?php
       if (!empty($extend_wp_search_parameters['filters'])) {
       ?>
    <div class="search-icon"><span id="filter-trigger"
-     onclick="changeSearchContainer(this);"><?php echo '<img src="' . $extend_wp_search_parameters['filter_icon'] . '"/>'; ?></span>
+     onclick="changeSearchContainer(this);"><?php echo ewps_display_image_or_svg($extend_wp_search_parameters['filter_icon']); ?></span>
    </div>
    <?php
       }
       if ($extend_wp_search_parameters['clean_view']) {
       ?>
    <div class="search-icon"><span id="close-trigger"
-     onclick="extend_wp_search_close_search();"><?php echo '<img src="' . $extend_wp_search_parameters['close_icon'] . '"/>'; ?></span>
+     onclick="extend_wp_search_close_search();"><?php echo ewps_display_image_or_svg($extend_wp_search_parameters['close_icon']); ?></span>
    </div>
    <?php
       }
