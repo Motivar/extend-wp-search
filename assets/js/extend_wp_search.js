@@ -5,12 +5,14 @@ class ExtendWpSearch {
             searchTrigger: extend_wp_search_vars.trigger || '', // Set from extend_wp_search_vars.trigger
             formSelector: '#ewps-search-form',
             submitButton: '#submit',
+            moreResultsButton: '#more-results-button', // Add more-results button
             resultsContainer: '#search-results',
             filtersContainer: '#search_form_filter',
             bodyClass: 'full-screen-open',
             fullScreenClass: 'full-screen-open-left',
             dataTrigger: 'data-trigger',
-            liveSearchInterval: 249
+            liveSearchInterval: 249,
+            normalFormSubmit: false // Flag to handle normal form submission
         }, options);
 
         this.typingTimer = null;
@@ -22,32 +24,34 @@ class ExtendWpSearch {
         this.liveSearch();
         this.autoTrigger();
 
-        // Ensure the submit button exists before adding event listener
+        // Cache form, button, and more-results button to avoid multiple lookups
         const submitButton = document.querySelector(this.settings.submitButton);
+        const searchTriggerElement = document.querySelector(this.settings.searchTrigger);
+
+        // Event listener for the submit button
         if (submitButton) {
             submitButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.search(); // Calling search method
+                // Prevent the default form submission only if normalFormSubmit is false
+                if (!this.settings.normalFormSubmit) {
+                    e.preventDefault();
+                    this.search(); // Calling search method
+                }
             });
         }
 
-        // Check if a custom search trigger is provided in extend_wp_search_vars
-        if (this.settings.searchTrigger !== '') {
-            const searchTriggerElement = document.querySelector(this.settings.searchTrigger);
 
-            if (searchTriggerElement) {
-                searchTriggerElement.addEventListener('click', () => {
-                    if (document.body.classList.contains('ewps-search-page-results')) {
-                        window.scrollTo({ top: document.querySelector("#search_form").offsetTop - 200, behavior: 'smooth' });
-                        return;
-                    }
-                    this.toggleFullScreen();
-                });
-            } else {
-                console.log(`Search trigger element not found: ${this.settings.searchTrigger}`);
-            }
-        } else {
-            console.error(`extend_wp_search_vars.trigger is empty.`);
+
+        // Check if a custom search trigger is provided in extend_wp_search_vars
+        if (searchTriggerElement) {
+            searchTriggerElement.addEventListener('click', () => {
+                if (document.body.classList.contains('ewps-search-page-results')) {
+                    window.scrollTo({ top: document.querySelector("#search_form").offsetTop - 200, behavior: 'smooth' });
+                    return;
+                }
+                this.toggleFullScreen();
+            });
+        } else if (this.settings.searchTrigger !== '') {
+            console.error(`Search trigger element not found: ${this.settings.searchTrigger}`);
         }
 
         // Expose methods to the global scope for inline `onclick`
@@ -65,8 +69,9 @@ class ExtendWpSearch {
 
     // Method to trigger the search (can be called globally now)
     search() {
+        const filterTrigger = document.querySelector('#filter-trigger');
         if (document.querySelector(this.settings.filtersContainer).classList.contains('active')) {
-            this.changeSearchContainer(document.querySelector('#filter-trigger'));
+            this.changeSearchContainer(filterTrigger);
         }
         this.searchQuery();
     }
@@ -97,7 +102,7 @@ class ExtendWpSearch {
     // Method to change search container (can be called globally)
     changeSearchContainer(wrap) {
         const fullScreen = document.body.classList.contains(this.settings.bodyClass);
-        let container = fullScreen ? '#search-full-screen' : 'body.page';
+        const container = fullScreen ? '#search-full-screen' : 'body.page';
 
         // Get the elements for results and filter
         const searchResults = document.querySelector(container + ' #search_form_resutls');
@@ -152,21 +157,43 @@ class ExtendWpSearch {
         const formData = new FormData(form);
         const queryString = new URLSearchParams(formData).toString(); // Convert formData to query string
 
+        // Fetch API with better error handling
         fetch(`${awmGlobals.url}/wp-json/extend-wp-search/search/?${queryString}`, {
             method: 'GET',
             cache: 'no-cache'
         })
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network error: ${response.statusText}`);
+                }
+                return response.text();
+            })
             .then(data => {
                 this.setLoading(false);
-
-                // Insert the response as HTML
+                // Insert the response as HTML, no need to parse JSON since it's HTML content
                 document.querySelector(container + ' ' + this.settings.resultsContainer).innerHTML = JSON.parse(data);
 
                 // Optionally trigger any custom event after search results are rendered
                 document.dispatchEvent(new Event('extend_wp_search_results'));
+
+                // Add event listener for dynamically added #more-results-button
+                const moreResultsButton = document.querySelector(this.settings.moreResultsButton);
+                // Event listener for the "more-results-button" click event
+                if (moreResultsButton) {
+                    moreResultsButton.addEventListener('click', () => {
+                        const submitButton = document.querySelector(this.settings.submitButton);
+                        // Allow normal form submission when moreResultsButton is clicked
+                        if (submitButton) {
+                            this.settings.normalFormSubmit = true;
+                            submitButton.click();
+                        }
+                    });
+                }
             })
-            .catch(error => console.error('Search error:', error));
+            .catch(error => {
+                this.setLoading(false);
+                console.error('Search error:', error);
+            });
     }
 
     // Method to toggle loading state
@@ -215,7 +242,6 @@ class ExtendWpSearch {
         if (searchTrigger) searchTrigger.removeEventListener('click', this.toggleFullScreen);
     }
 }
-
 // Usage Example:
 document.addEventListener('DOMContentLoaded', () => {
     const wpSearch = ExtendWpSearch.create({
