@@ -15,7 +15,9 @@ $extend_wp_search_parameters['number'] = $number;
 $hidden_inputs = extend_wp_search_hidden_inputs($extend_wp_search_parameters);
 $extend_wp_search_parameters['filters'] = extend_wp_search_prepare_filters($extend_wp_search_parameters, $extend_wp_search_archive_option);
 
-
+if (!empty($extend_wp_search_parameters['filters'])) {
+  $extend_wp_search_parameters['main-class'][] = 'show-filter';
+}
 ?>
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
  <form id="ewps-search-form" method="get" action="<?php echo $extend_wp_search_parameters['action'] ?>">

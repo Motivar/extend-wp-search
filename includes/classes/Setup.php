@@ -68,7 +68,7 @@ class Setup
       'case' => 'input',
       'type' => 'text',
       'class' => array(),
-      'explanation' => __('Separate post types with a comma.', 'extend-wp'),
+      'explanation' => __('Separate post types slugs with a comma.', 'extend-wp'),
      ),
      'taxonomies' => array(
       'key' => 'taxonomy',
@@ -76,6 +76,15 @@ class Setup
       'case' => 'input',
       'type' => 'text',
       'class' => array(),
+      'explanation' => __('Separate taxonomies slugs with a comma.', 'extend-wp'),
+     ),
+     'results' => array(
+      'key' => 'results',
+      'label' => __('Show Results', 'extend-wp'),
+      'case' => 'input',
+      'type' => 'checkbox',
+      'class' => array(),
+      'explanation' => __('Show search results on the same page.', 'extend-wp'),
      ),
     ),
     'category' => 'design', // Gutenberg block category
@@ -179,7 +188,30 @@ class Setup
     'type' => 'color',
     'attributes' => array('customizer_default' => '#002642', 'customizer_sanitize_callback' => 'sanitize_hex_color')
    ),
-   // Define other color settings for secondary, third, etc.
+   'secondary-color' => array(
+    'label'   => __('Secondary Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#840032', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'third-color' => array(
+    'label'   => __('Third Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#E59500', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'fourth-color' => array(
+    'label'   => __('Fourth Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#ffffff', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
+   'fifth-color' => array(
+    'label'   => __('Fifth Color', 'filox'),
+    'case' => 'input',
+    'type' => 'color',
+    'attributes' => array('customizer_default' => '#F2F4F5', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+   ),
   );
  }
 
@@ -230,7 +262,7 @@ class Setup
  public function registerScripts()
  {
   $version = 0.2;
-  wp_register_script('ewps-search-script', extend_wp_search_url . 'assets/js/extend_wp_search.js', array(), false, $version);
+  wp_register_script('ewps-search-script', extend_wp_search_url . 'assets/js/extend_wp_search.js', array('awm-global-script'), false, $version);
   wp_register_style('ewps-search-style', extend_wp_search_url . 'assets/css/full-screen.min.css', false, $version);
  }
 
