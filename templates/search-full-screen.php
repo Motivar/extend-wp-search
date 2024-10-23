@@ -7,6 +7,6 @@ if (!defined('ABSPATH')) exit;
 ?>
 <div id="search-full-screen" class="full-screen left">
  <div class="container">
-  <?php echo do_shortcode('[extend_wp_search results="1" clean_view="1"]'); ?>
+  <?php echo do_shortcode('[extend_wp_search results="1" show_close="1" full_screen="1"]'); ?>
  </div>
 </div>

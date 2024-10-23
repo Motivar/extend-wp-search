@@ -1,8 +1,10 @@
 class ExtendWpSearch {
-    constructor(options = {}) {
+    constructor(wrapper, options = {}) {
         // Default settings
+        this.wrapper = wrapper;
+        console.log(wrapper);
         this.settings = Object.assign({
-            searchTrigger: extend_wp_search_vars.trigger || '', // Set from extend_wp_search_vars.trigger
+            searchTrigger: extend_wp_search_vars.trigger || '', // Set from // Assuming a general trigger selector
             formSelector: '#ewps-search-form',
             submitButton: '#submit',
             moreResultsButton: '#more-results-button', // Add more-results button
@@ -10,12 +12,15 @@ class ExtendWpSearch {
             filtersContainer: '#search_form_filter',
             bodyClass: 'full-screen-open',
             fullScreenClass: 'full-screen-open-left',
+            fullScreenPosition: wrapper.getAttribute('full-screen') || false,
             dataTrigger: 'data-trigger',
             inputLength: 3,
-            pagination: extend_wp_search_vars.pagination || 'numbers', 
+            pagination: extend_wp_search_vars.pagination || 'numbers',
             liveSearchInterval: 249,
             normalFormSubmit: false // Flag to handle normal form submission
         }, options);
+
+        // Use the wrapper (each instance will have its own context)
 
         this.typingTimer = null;
         this.initialize(); // Initialize everything
@@ -25,54 +30,91 @@ class ExtendWpSearch {
     initialize() {
         this.liveSearch();
         this.autoTrigger();
+        this.initPagination();
 
         // Cache form, button, and more-results button to avoid multiple lookups
-        const submitButton = document.querySelector(this.settings.submitButton);
+        const submitButton = this.wrapper.querySelector(this.settings.submitButton);
         const searchTriggerElement = document.querySelector(this.settings.searchTrigger);
+
+        const undoButton = this.wrapper.querySelector('#undo-checkboxes');
+        const applyButton = this.wrapper.querySelector('#apply-checkboxes');
+
+        const searchBarTriggerElement = this.wrapper.querySelector('#search-trigger');
+        const filterTriggerElement = this.wrapper.querySelector('#filter-trigger');
+        const closeTriggerElement = this.wrapper.querySelector('#close-trigger');
+        // Event listener for search trigger
+        if (searchBarTriggerElement) {
+            searchBarTriggerElement.addEventListener('click', () => {
+                if (this.wrapper.querySelector('.search-bar').classList.contains('show-results')) {
+                    this.search(); // Call the search method
+                }
+                else {
+                    submitButton.click();
+                }
+            });
+        }
+
+        // Event listener for filter trigger
+        if (filterTriggerElement) {
+            filterTriggerElement.addEventListener('click', () => {
+                this.changeSearchContainer(filterTriggerElement); // Change search container
+            });
+        }
+
+        // Event listener for close trigger
+        if (closeTriggerElement) {
+            closeTriggerElement.addEventListener('click', () => {
+                this.extend_wp_search_close_search(); // Close the search container
+            });
+        }
+
+
+        // Event listener for undo button (remove filters)
+        if (undoButton) {
+            undoButton.addEventListener('click', () => {
+                this.disableCheckboxes(); // Calls the method to disable the checkboxes
+            });
+        }
+
+        // Event listener for apply button (apply filters)
+        if (applyButton) {
+            applyButton.addEventListener('click', () => {
+                this.newSearch(); // Calls the method to start a new search
+            });
+        }
+
 
         // Event listener for the submit button
         if (submitButton) {
             submitButton.addEventListener('click', (e) => {
+                if (this.wrapper.querySelector('.search-bar').classList.contains('show-results')) {
                 // Prevent the default form submission only if normalFormSubmit is false
                 if (!this.settings.normalFormSubmit) {
                     e.preventDefault();
                     this.search(); // Calling search method
                 }
+                }
             });
         }
 
-
-
-        // Check if a custom search trigger is provided in extend_wp_search_vars
-        if (searchTriggerElement) {
+        // Check if a custom search trigger is provided in the wrapper
+        if (searchTriggerElement && this.settings.fullScreenPosition) {
             searchTriggerElement.addEventListener('click', () => {
                 if (document.body.classList.contains('ewps-search-page-results')) {
-                    window.scrollTo({ top: document.querySelector("#search_form").offsetTop - 200, behavior: 'smooth' });
+                    window.scrollTo({ top: this.wrapper.querySelector(this.settings.formSelector).offsetTop - 200, behavior: 'smooth' });
                     return;
                 }
                 this.toggleFullScreen();
             });
-        } else if (this.settings.searchTrigger !== '') {
-            console.log(`Search trigger element not found: ${this.settings.searchTrigger}`);
         }
 
-        // Expose methods to the global scope for inline `onclick`
-        this.exposeGlobalMethods();
-    }
 
-    // Method to expose the required methods to the global scope
-    exposeGlobalMethods() {
-        window.extend_wp_search_click = this.search.bind(this); // Bind search method
-        window.changeSearchContainer = this.changeSearchContainer.bind(this);
-        window.extend_wp_search_close_search = this.extend_wp_search_close_search.bind(this);
-        window.newSearch = this.newSearch.bind(this);
-        window.disableCheckboxes = this.disableCheckboxes.bind(this);
     }
 
     // Method to trigger the search (can be called globally now)
     search() {
-        const filterTrigger = document.querySelector('#filter-trigger');
-        if (document.querySelector(this.settings.filtersContainer).classList.contains('active')) {
+        const filterTrigger = this.wrapper.querySelector('#filter-trigger');
+        if (this.wrapper.querySelector(this.settings.filtersContainer) != null && this.wrapper.querySelector(this.settings.filtersContainer).classList.contains('active')) {
             this.changeSearchContainer(filterTrigger);
         }
         this.searchQuery();
@@ -80,10 +122,10 @@ class ExtendWpSearch {
 
     // Method to handle live search functionality
     liveSearch() {
-        const input = document.querySelector('input[name="searchtext"]');
+        const input = this.wrapper.querySelector('input[name="searchtext"]');
 
-        if (!input) return;
 
+        if (!input || !this.wrapper.querySelector('.search-bar').classList.contains('show-results')) return;
 
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -104,12 +146,11 @@ class ExtendWpSearch {
 
     // Method to change search container (can be called globally)
     changeSearchContainer(wrap) {
-        const fullScreen = document.body.classList.contains(this.settings.bodyClass);
-        const container = fullScreen ? '#search-full-screen' : 'body.page';
-
+        const container = this.wrapper;
+        console.log(container);
         // Get the elements for results and filter
-        const searchResults = document.querySelector(container + ' #search_form_resutls');
-        const searchFormFilter = document.querySelector(container + ' #search_form_filter');
+        const searchResults = container.querySelector('#search_form_resutls');
+        const searchFormFilter = container.querySelector('#search_form_filter');
 
         // Toggle the active class between searchResults and searchFormFilter
         if (searchResults.classList.contains('active')) {
@@ -134,7 +175,7 @@ class ExtendWpSearch {
 
     // Method to disable checkboxes (can be called globally)
     disableCheckboxes() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const checkboxes = this.wrapper.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(checkbox => {
             checkbox.checked = false;
         });
@@ -143,31 +184,32 @@ class ExtendWpSearch {
 
     // Method to trigger search automatically
     autoTrigger() {
-        const searchForm = document.querySelector('#search_form');
-        if (searchForm && searchForm.getAttribute(this.settings.dataTrigger) === '1') {
+        const searchForm = this.wrapper.querySelector('#search_form');
+        console.log(searchForm);
+        if (searchForm && parseInt(searchForm.getAttribute(this.settings.dataTrigger)) === 1) {
+            console.log('aaa');
             this.search(); // Calling search method
         }
     }
 
     // Method to execute the search query
     searchQuery() {
-        const container = document.body.classList.contains(this.settings.bodyClass) ? '#search-full-screen' : 'body.page';
-        const input = document.querySelector('input[name="searchtext"]');
-        /*check input lenth*/
+        const container = this.wrapper;
+        const input = this.wrapper.querySelector('input[name="searchtext"]');
+        /*check input length*/
         if (input.value.length < this.settings.inputLength) {
             return;
         }
 
-        const form = document.querySelector(container + ' ' + this.settings.formSelector);
+        const form = container.querySelector(this.settings.formSelector);
         if (!form) return;
-        /*add pagination typeto data*/
+
+        /*add pagination type to data*/
         if (this.compareFormData(form)) {
             console.log("Query is the same, no action taken.");
             return; // Don't proceed with the search if the data is the same
         }
         this.setLoading(true);
-
-
 
         const formData = new FormData(form);
         const queryString = new URLSearchParams(formData).toString(); // Convert formData to query string
@@ -184,31 +226,29 @@ class ExtendWpSearch {
             })
             .then(data => {
                 this.setLoading(false);
-                var html_data = JSON.parse(data);
-                const resultsContainer = document.querySelector(container + ' ' + this.settings.resultsContainer);
+                const html_data = JSON.parse(data);
+                const resultsContainer = this.wrapper.querySelector(this.settings.resultsContainer);
 
                 if (this.settings.pagination === 'button') {
                     const resultsWrapper = resultsContainer.querySelector('.results-wrapper');
-                    if (resultsWrapper && document.querySelector('#ewps-search-form input[name="paged"]').value > 1) {
+                    if (resultsWrapper && this.wrapper.querySelector('input[name="paged"]').value > 1) {
                         resultsWrapper.innerHTML += html_data.results;
-                        if (html_data.button != '') {
-                            document.querySelector('.ewps-pagination').innerHTML = html_data.button;
+                        if (html_data.button !== '') {
+                            this.wrapper.querySelector('.ewps-pagination').innerHTML = html_data.button;
                         }
-
-                    }
-                    else {
+                    } else {
                         resultsContainer.innerHTML = html_data;
                     }
                 } else {
                     // Replace content for pagination
                     resultsContainer.innerHTML = html_data;
                 }
+
                 // Initialize pagination or infinite scroll
                 this.initPagination();
                 this.checkFullScreenButton();
                 // Optionally trigger any custom event after search results are rendered
                 document.dispatchEvent(new Event('extend_wp_search_results'));
-
             })
             .catch(error => {
                 this.setLoading(false);
@@ -216,64 +256,44 @@ class ExtendWpSearch {
             });
     }
 
-
     // Method to serialize form data and compare with previous data
     compareFormData(form) {
-        // Serialize the current form data into a query string format
         const formData = new FormData(form);
         let hasNonPagedChanges = false;
         const currentQuery = new URLSearchParams(formData);
         const currentQueryString = currentQuery.toString();
-        // Parse the previous query string into a URLSearchParams object
         const previousQuery = this.settings.previousQueryString
             ? new URLSearchParams(this.settings.previousQueryString)
             : new URLSearchParams();
 
-        // Iterate over current form data and compare with previous data
         for (const [key, value] of currentQuery.entries()) {
             if (key !== 'paged') {
-                // If any field other than 'paged' has changed, mark it
                 if (value !== previousQuery.get(key)) {
                     hasNonPagedChanges = true;
-                    break; // We can exit early if we detect a change
+                    break;
                 }
             }
         }
 
-        // If there are changes in any field except 'paged', reset 'paged' to 1
         if (hasNonPagedChanges) {
             form.querySelector('input[name="paged"]').value = 1;
         }
 
-
-        // Check if there is previous form data stored
         if (this.settings.previousQueryString) {
-            // Compare the new form data with the old data (excluding the 'paged' parameter)
-            const isSameQuery = currentQueryString === this.settings.previousQueryString
-
-            // If the data is the same, return true, meaning no need to run the search
-            if (isSameQuery) {
-                return true;
-            }
+            const isSameQuery = currentQueryString === this.settings.previousQueryString;
+            if (isSameQuery) return true;
         }
 
-        // Update the stored previousQueryString with the new data
         this.settings.previousQueryString = currentQueryString;
-
-        // Return false, meaning the data has changed and the search should be executed
         return false;
     }
 
-
     // Method to check if the full screen button is visible
     checkFullScreenButton() {
-        // Add event listener for dynamically added #more-results-button
-        const moreResultsButton = document.querySelector(this.settings.moreResultsButton);
-        // Event listener for the "more-results-button" click event
+        const moreResultsButton = this.wrapper.querySelector(this.settings.moreResultsButton);
         if (moreResultsButton) {
             moreResultsButton.addEventListener('click', () => {
-                const submitButton = document.querySelector(this.settings.submitButton);
-                // Allow normal form submission when moreResultsButton is clicked
+                const submitButton = this.wrapper.querySelector(this.settings.submitButton);
                 if (submitButton) {
                     this.settings.normalFormSubmit = true;
                     submitButton.click();
@@ -284,8 +304,8 @@ class ExtendWpSearch {
 
     // Method to toggle loading state
     setLoading(isLoading) {
-        let loadingDiv = document.querySelector(this.settings.resultsContainer);
-        if (this.settings.pagination === 'button' && document.querySelector('#ewps-search-form input[name="paged"]').value > 1) {
+        let loadingDiv = this.wrapper.querySelector(this.settings.resultsContainer);
+        if (this.settings.pagination === 'button' && this.wrapper.querySelector('input[name="paged"]').value > 1) {
             const resultsWrapper = loadingDiv.querySelector('.ewps-pagination');
             if (resultsWrapper) {
                 loadingDiv = resultsWrapper;
@@ -313,8 +333,8 @@ class ExtendWpSearch {
     }
 
     // Method to create a new instance of the class
-    static create(options) {
-        return new ExtendWpSearch(options);
+    static create(wrapper, options) {
+        return new ExtendWpSearch(wrapper, options);
     }
 
     // Method to update settings dynamically
@@ -324,16 +344,12 @@ class ExtendWpSearch {
 
     // Method to destroy the instance
     destroy() {
-        // Remove all event listeners, clear timeouts
         clearTimeout(this.typingTimer);
-
-        const submitButton = document.querySelector(this.settings.submitButton);
+        const submitButton = this.wrapper.querySelector(this.settings.submitButton);
         if (submitButton) submitButton.removeEventListener('click', this.search);
-
         const searchTrigger = document.querySelector(this.settings.searchTrigger);
         if (searchTrigger) searchTrigger.removeEventListener('click', this.toggleFullScreen);
     }
-
 
     // Initialize pagination or infinite scroll
     initPagination() {
@@ -346,51 +362,50 @@ class ExtendWpSearch {
 
     // Attach click events to load more button
     attachLoadMoreEvents() {
-        const loadMoreButton = document.querySelector('.ewps-load-more');
+        const loadMoreButton = this.wrapper.querySelector('.ewps-load-more');
         if (loadMoreButton) {
             loadMoreButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = parseInt(loadMoreButton.getAttribute('data-page')) + 1;
                 loadMoreButton.setAttribute('data-page', page);
-                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.wrapper.querySelector('input[name="paged"]').value = page;
                 this.search();
-
             });
         }
     }
 
-
     // Attach click events to pagination links
     attachPaginationEvents() {
-        const paginationLinks = document.querySelectorAll('.ewps-pagination a.page-numbers');
+        const paginationLinks = this.wrapper.querySelectorAll('.ewps-pagination a.page-numbers');
         paginationLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = parseInt(link.innerText) || parseInt(link.getAttribute('href').split('page/')[1]);
-                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.wrapper.querySelector('input[name="paged"]').value = page;
                 this.search();
             });
         });
     }
 
-
     // Handle infinite scroll (auto-load next page)
     handleInfiniteScroll() {
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-            const loadMoreButton = document.querySelector('.ewps-load-more');
+            const loadMoreButton = this.wrapper.querySelector('.ewps-load-more');
             if (loadMoreButton) {
                 const page = parseInt(loadMoreButton.getAttribute('data-page')) + 1;
-                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.wrapper.querySelector('input[name="paged"]').value = page;
                 this.search();
-
             }
         }
     }
-
 }
-// Usage Example:
+
+// Instantiate for each search form instance
 document.addEventListener('DOMContentLoaded', () => {
-    const wpSearch = ExtendWpSearch.create({
-        liveSearchInterval: 300
+    const searchForms = document.querySelectorAll('.ewps-search-interface');
+    searchForms.forEach(formElement => {
+        ExtendWpSearch.create(formElement, {
+            liveSearchInterval: 300
+        });
     });
 });

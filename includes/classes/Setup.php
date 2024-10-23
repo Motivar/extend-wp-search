@@ -88,6 +88,14 @@ class Setup
       'class' => array(),
       'explanation' => __('Show search results on the same page.', 'extend-wp'),
      ),
+     'show_filters' => array(
+      'key' => 'filters',
+      'label' => __('Show filters', 'extend-wp'),
+      'case' => 'input',
+      'type' => 'checkbox',
+      'class' => array(),
+      'explanation' => __('Show filters on search bar', 'extend-wp'),
+     ),
     ),
     'category' => 'design', // Gutenberg block category
    )
@@ -102,7 +110,9 @@ class Setup
  {
   // Set default attributes and merge with provided ones
   $variables = shortcode_atts(array(
-   'clean_view' => true,
+   'show_close' => false,
+   'show_filters' => true,
+   'full_screen' => false,
    'post_types' => array(),
    'taxonomies' => array(),
    'action' => '',
@@ -114,10 +124,8 @@ class Setup
   ), $atts);
 
   // Handle specific conditions based on the post and search pages
-  global $post;
-  $pages = extend_wp_search_pages();
-  if ($post && isset($post->ID) && in_array($post->ID, $pages)) {
-   $variables['clean_view'] = false;
+  if ($variables['results']) {
+   $variables['show_filters'] = 1;
   }
 
   // Set the search form action URL
@@ -126,8 +134,8 @@ class Setup
 
   // Handle class attributes and search parameters
   $variables['main-class'] = array();
-  $variables['main-class'][] = $variables['results'] == 1 ? 'show-filter' : '';
-  $variables['main-class'][] = $variables['clean_view'] == 1 ? 'show-close' : '';
+  $variables['main-class'][] = (isset($variables['results']) && $variables['results']) ? 'show-results' : '';
+  $variables['main-class'][] = $variables['show_close'] == 1 ? 'show-close' : '';
 
   // Set default post types and taxonomies if not provided
   if (empty($variables['post_types'])) {
@@ -143,9 +151,16 @@ class Setup
    $variables['years'] = get_option('extend_wp_search_years') ?: array();
   }
 
+  if (isset($_REQUEST['searchtext'])) {
+   global $extend_wp_search_params;
+   $extend_wp_search_params = $_REQUEST;
+  }
+
   // Pass the search parameters globally
   global $extend_wp_search_parameters;
+  global $extend_wp_search_results;
   $extend_wp_search_parameters = $variables;
+  $extend_wp_search_results = $this->construct_post_query();
   // Render the search interface template
   return extend_wp_search_template_part('body.php');
  }
@@ -364,6 +379,7 @@ class Setup
   global $extend_wp_search_params;
 
   $extend_wp_search_params = $params;
+
   $extend_wp_search_action = true;
 
   // Perform the post query and render the results
@@ -396,8 +412,12 @@ class Setup
  public function construct_post_query()
  {
   global $extend_wp_search_params;
+  global $extend_wp_search_parameters;
+  global $search_title;
+  $search_title = __('Most recent articles', 'extend-wp-search');
   $limit = get_option('extend_wp_search_default_limit') ?: 10;
   $paged = isset($extend_wp_search_params['paged']) ? $extend_wp_search_params['paged'] : 1;
+  $post_types = isset($extend_wp_search_params['post_types']) ? explode(',', $extend_wp_search_params['post_types']) : $extend_wp_search_parameters['post_types'];
   $title = array();
   $tax_query = $meta_query = array();
   $default_order = get_option('extend_wp_search_default_order') ?: 'publish_date';
@@ -407,8 +427,7 @@ class Setup
   $args = array(
    'post_status' => 'publish',
    'suppress_filters' => false,
-   'post_type' => explode(',', $extend_wp_search_params['post_types']),
-   'numberposts' => $extend_wp_search_params['numberposts'],
+   'post_type' => $post_types,
    'orderby' => $default_order,
    'order' => $default_order_type,
    'posts_per_page' => $limit,

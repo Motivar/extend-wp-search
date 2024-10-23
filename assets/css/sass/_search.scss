@@ -382,6 +382,7 @@
          .filters {
              color: var(--ewps-search-fourth-color);
              height: calc(100% - 60px);
+             min-height:200px;
              @media (#{$bp-smaller-than-tablet}) {
                  height: calc(100% - 150px);
              }
