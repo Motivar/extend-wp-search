@@ -467,9 +467,9 @@ class Setup
     $args['date_query'][] = array('year' => $year);
    }
   }
-
-  global $search_title;
+  if (!empty($title)) {
   $search_title = implode(' ', $title);
+  }
 
   // Return the constructed query
   return new WP_Query($args);
