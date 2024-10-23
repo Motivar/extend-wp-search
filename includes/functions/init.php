@@ -31,7 +31,7 @@ if (!function_exists('extend_wp_search_admin_settings')) {
    'extend_wp_search_trigger_element' => array(
     'case' => 'input',
     'type' => 'text',
-    'label' => __('Element class/id to trigger search on click', 'extend-wp-search'),
+    'label' => __('Element class/id to trigger full search on click', 'extend-wp-search'),
     'explanation' => __('valid query selector like #main,.class', 'extend-wp-search')
    ),
    'extend_wp_search_search_results_page' => array(

@@ -70,7 +70,7 @@ class Setup
       'case' => 'input',
       'type' => 'text',
       'class' => array(),
-      'explanation' => __('Separate post types slugs with a comma.', 'extend-wp'),
+      'explanation' => __('Separate post types slugs with a comma. If empty the defaults will be used.', 'extend-wp'),
      ),
      'taxonomies' => array(
       'key' => 'taxonomy',
@@ -78,7 +78,7 @@ class Setup
       'case' => 'input',
       'type' => 'text',
       'class' => array(),
-      'explanation' => __('Separate taxonomies slugs with a comma.', 'extend-wp'),
+      'explanation' => __('Separate taxonomies slugs with a comma. If empty the defaults will be used.', 'extend-wp'),
      ),
      'results' => array(
       'key' => 'results',
