@@ -38,3 +38,13 @@ A simple UI interface to create a search engine for WordPress.
 6. **Trigger Full-Screen Search**:
    - To trigger the search interface as a full-screen overlay, use the **Element Class/ID to Trigger Search on Click** option.
    - Enter a valid query selector (e.g., `#main`, `.class`) to trigger the full-screen search interface when the specified element is clicked.
+
+7. **Customizing Colors**:
+   - The plugin allows you to customize colors through the **WordPress Customizer**.
+   - Navigate to **Appearance** > **Customize** > **EWP Search Interface** > **Colors**.
+   - From there, you can change the following:
+     - **Main Color**: This color is used for the full-screen background and icons on the main search page.
+     - **Secondary Color**: This color applies to hyperlinks and text areas on the search page.
+     - **Third Color**: Used for CTA buttons and hyperlinks in the full-screen view.
+     - **Fourth Color**: A helper color for full-screen and search page icons.
+     - **Fifth Color**: Another helper color used in full-screen and search page icons.
