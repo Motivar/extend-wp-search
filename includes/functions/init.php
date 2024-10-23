@@ -93,6 +93,21 @@ if (!function_exists('extend_wp_search_admin_settings')) {
 
     ),
    ),
+   'extend_wp_search_default_limit' => array(
+    'label' => __('Default results limit', 'extend-wp-search'),
+    'case' => 'input',
+    'type' => 'number'
+   ),
+   'extend_wp_search_default_pagination' => array(
+    'label' => __('Pagination types', 'extend-wp-search'),
+    'case' => 'select',
+    'removeEmpty' => true,
+    'options' => array(
+     'numbers' => array('label' => __('Numbers', 'extend-wp-search')),
+     'button' => array('label' => __('Button', 'extend-wp-search')),
+
+    ),
+   ),
 
   ));
  }

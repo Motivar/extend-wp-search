@@ -2,6 +2,8 @@
 
 namespace EWP_Search;
 
+use WP_Query;
+
 // Ensure the script is not accessed directly outside of WordPress
 if (!defined('ABSPATH')) {
  exit;
@@ -186,31 +188,36 @@ class Setup
     'label' => __('Main Color', 'extend-wp-search'),
     'case' => 'input',
     'type' => 'color',
-    'attributes' => array('customizer_default' => '#002642', 'customizer_sanitize_callback' => 'sanitize_hex_color')
+    'attributes' => array('customizer_default' => '#002642', 'customizer_sanitize_callback' => 'sanitize_hex_color'),
+    'explanation' => __('This color is used for the full-screen bacgkround and icons in main search page', 'extend-wp-search')
    ),
    'secondary-color' => array(
     'label'   => __('Secondary Color', 'filox'),
     'case' => 'input',
     'type' => 'color',
-    'attributes' => array('customizer_default' => '#840032', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+    'attributes' => array('customizer_default' => '#840032', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage'),
+    'explanation' => __('Search page: hperlinks and textarea', 'extend-wp-search')
    ),
    'third-color' => array(
     'label'   => __('Third Color', 'filox'),
     'case' => 'input',
     'type' => 'color',
-    'attributes' => array('customizer_default' => '#E59500', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+    'attributes' => array('customizer_default' => '#E59500', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage'),
+    'explanation' => __('In full screen as asCTA Button  search and hyperlinks', 'extend-wp-search')
    ),
    'fourth-color' => array(
     'label'   => __('Fourth Color', 'filox'),
     'case' => 'input',
     'type' => 'color',
-    'attributes' => array('customizer_default' => '#ffffff', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+    'attributes' => array('customizer_default' => '#ffffff', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage'),
+    'explanation' => __('Helper colour in full screen and search page icons', 'extend-wp-search')
    ),
    'fifth-color' => array(
     'label'   => __('Fifth Color', 'filox'),
     'case' => 'input',
     'type' => 'color',
-    'attributes' => array('customizer_default' => '#F2F4F5', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage')
+    'attributes' => array('customizer_default' => '#F2F4F5', 'customizer_sanitize_callback' => 'sanitize_hex_color', 'customizer_transport' => 'postMessage'),
+    'explanation' => __('Helper colour in full screen and search page icons', 'extend-wp-search')
    ),
   );
  }
@@ -272,7 +279,7 @@ class Setup
  public function addScripts()
  {
   wp_enqueue_style('ewps-search-style');
-  wp_localize_script('ewps-search-script', 'extend_wp_search_vars', apply_filters('extend_wp_search_vars_filter', array('trigger' => get_option('extend_wp_search_trigger_element'))));
+  wp_localize_script('ewps-search-script', 'extend_wp_search_vars', apply_filters('extend_wp_search_vars_filter', array('trigger' => get_option('extend_wp_search_trigger_element'), 'pagination' => get_option('extend_wp_search_default_pagination') ?: 'numbers')));
   wp_enqueue_script('ewps-search-script');
  }
 
@@ -361,6 +368,23 @@ class Setup
 
   // Perform the post query and render the results
   $extend_wp_search_results = $this->construct_post_query();
+
+  // Render the search results template
+  if (isset($extend_wp_search_params['searchpage'])) {
+   $response = array('results' => [], 'button' => '');
+   if (isset($extend_wp_search_params['paged']) && $extend_wp_search_params['paged'] > 1 && $extend_wp_search_params['pagination'] == 'button') {
+    foreach ($extend_wp_search_results->posts as $post) {
+     global $result_post;
+     $result_post = $post;
+     $response['results'][] = extend_wp_search_template_part('result.php');
+    }
+    $response['button'] = extend_wp_search_template_part('pagination.php');
+    return rest_ensure_response(new \WP_REST_Response($response), 200);
+   }
+  }
+
+
+  
   $response = extend_wp_search_template_part('results.php');
 
   return rest_ensure_response(new \WP_REST_Response($response), 200);
@@ -372,6 +396,8 @@ class Setup
  public function construct_post_query()
  {
   global $extend_wp_search_params;
+  $limit = get_option('extend_wp_search_default_limit') ?: 10;
+  $paged = isset($extend_wp_search_params['paged']) ? $extend_wp_search_params['paged'] : 1;
   $title = array();
   $tax_query = $meta_query = array();
   $default_order = get_option('extend_wp_search_default_order') ?: 'publish_date';
@@ -384,9 +410,10 @@ class Setup
    'post_type' => explode(',', $extend_wp_search_params['post_types']),
    'numberposts' => $extend_wp_search_params['numberposts'],
    'orderby' => $default_order,
-   'order' => $default_order_type
+   'order' => $default_order_type,
+   'posts_per_page' => $limit,
+   'paged' => $paged,
   );
-
   // Add search term if provided
   if (isset($extend_wp_search_params['searchtext'])) {
    $args['s'] = sanitize_text_field($extend_wp_search_params['searchtext']);
@@ -426,6 +453,6 @@ class Setup
   $search_title = implode(' ', $title);
 
   // Return the constructed query
-  return get_posts($args);
+  return new WP_Query($args);
  }
 }

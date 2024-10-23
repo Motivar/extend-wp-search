@@ -11,6 +11,8 @@ class ExtendWpSearch {
             bodyClass: 'full-screen-open',
             fullScreenClass: 'full-screen-open-left',
             dataTrigger: 'data-trigger',
+            inputLength: 3,
+            pagination: extend_wp_search_vars.pagination || 'numbers', 
             liveSearchInterval: 249,
             normalFormSubmit: false // Flag to handle normal form submission
         }, options);
@@ -51,7 +53,7 @@ class ExtendWpSearch {
                 this.toggleFullScreen();
             });
         } else if (this.settings.searchTrigger !== '') {
-            console.error(`Search trigger element not found: ${this.settings.searchTrigger}`);
+            console.log(`Search trigger element not found: ${this.settings.searchTrigger}`);
         }
 
         // Expose methods to the global scope for inline `onclick`
@@ -81,6 +83,7 @@ class ExtendWpSearch {
         const input = document.querySelector('input[name="searchtext"]');
 
         if (!input) return;
+
 
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -149,14 +152,25 @@ class ExtendWpSearch {
     // Method to execute the search query
     searchQuery() {
         const container = document.body.classList.contains(this.settings.bodyClass) ? '#search-full-screen' : 'body.page';
-        this.setLoading(true);
+        const input = document.querySelector('input[name="searchtext"]');
+        /*check input lenth*/
+        if (input.value.length < this.settings.inputLength) {
+            return;
+        }
 
         const form = document.querySelector(container + ' ' + this.settings.formSelector);
         if (!form) return;
+        /*add pagination typeto data*/
+        if (this.compareFormData(form)) {
+            console.log("Query is the same, no action taken.");
+            return; // Don't proceed with the search if the data is the same
+        }
+        this.setLoading(true);
+
+
 
         const formData = new FormData(form);
         const queryString = new URLSearchParams(formData).toString(); // Convert formData to query string
-
         // Fetch API with better error handling
         fetch(`${awmGlobals.url}/wp-json/extend-wp-search/search/?${queryString}`, {
             method: 'GET',
@@ -170,25 +184,31 @@ class ExtendWpSearch {
             })
             .then(data => {
                 this.setLoading(false);
-                // Insert the response as HTML, no need to parse JSON since it's HTML content
-                document.querySelector(container + ' ' + this.settings.resultsContainer).innerHTML = JSON.parse(data);
+                var html_data = JSON.parse(data);
+                const resultsContainer = document.querySelector(container + ' ' + this.settings.resultsContainer);
 
+                if (this.settings.pagination === 'button') {
+                    const resultsWrapper = resultsContainer.querySelector('.results-wrapper');
+                    if (resultsWrapper && document.querySelector('#ewps-search-form input[name="paged"]').value > 1) {
+                        resultsWrapper.innerHTML += html_data.results;
+                        if (html_data.button != '') {
+                            document.querySelector('.ewps-pagination').innerHTML = html_data.button;
+                        }
+
+                    }
+                    else {
+                        resultsContainer.innerHTML = html_data;
+                    }
+                } else {
+                    // Replace content for pagination
+                    resultsContainer.innerHTML = html_data;
+                }
+                // Initialize pagination or infinite scroll
+                this.initPagination();
+                this.checkFullScreenButton();
                 // Optionally trigger any custom event after search results are rendered
                 document.dispatchEvent(new Event('extend_wp_search_results'));
 
-                // Add event listener for dynamically added #more-results-button
-                const moreResultsButton = document.querySelector(this.settings.moreResultsButton);
-                // Event listener for the "more-results-button" click event
-                if (moreResultsButton) {
-                    moreResultsButton.addEventListener('click', () => {
-                        const submitButton = document.querySelector(this.settings.submitButton);
-                        // Allow normal form submission when moreResultsButton is clicked
-                        if (submitButton) {
-                            this.settings.normalFormSubmit = true;
-                            submitButton.click();
-                        }
-                    });
-                }
             })
             .catch(error => {
                 this.setLoading(false);
@@ -196,9 +216,81 @@ class ExtendWpSearch {
             });
     }
 
+
+    // Method to serialize form data and compare with previous data
+    compareFormData(form) {
+        // Serialize the current form data into a query string format
+        const formData = new FormData(form);
+        let hasNonPagedChanges = false;
+        const currentQuery = new URLSearchParams(formData);
+        const currentQueryString = currentQuery.toString();
+        // Parse the previous query string into a URLSearchParams object
+        const previousQuery = this.settings.previousQueryString
+            ? new URLSearchParams(this.settings.previousQueryString)
+            : new URLSearchParams();
+
+        // Iterate over current form data and compare with previous data
+        for (const [key, value] of currentQuery.entries()) {
+            if (key !== 'paged') {
+                // If any field other than 'paged' has changed, mark it
+                if (value !== previousQuery.get(key)) {
+                    hasNonPagedChanges = true;
+                    break; // We can exit early if we detect a change
+                }
+            }
+        }
+
+        // If there are changes in any field except 'paged', reset 'paged' to 1
+        if (hasNonPagedChanges) {
+            form.querySelector('input[name="paged"]').value = 1;
+        }
+
+
+        // Check if there is previous form data stored
+        if (this.settings.previousQueryString) {
+            // Compare the new form data with the old data (excluding the 'paged' parameter)
+            const isSameQuery = currentQueryString === this.settings.previousQueryString
+
+            // If the data is the same, return true, meaning no need to run the search
+            if (isSameQuery) {
+                return true;
+            }
+        }
+
+        // Update the stored previousQueryString with the new data
+        this.settings.previousQueryString = currentQueryString;
+
+        // Return false, meaning the data has changed and the search should be executed
+        return false;
+    }
+
+
+    // Method to check if the full screen button is visible
+    checkFullScreenButton() {
+        // Add event listener for dynamically added #more-results-button
+        const moreResultsButton = document.querySelector(this.settings.moreResultsButton);
+        // Event listener for the "more-results-button" click event
+        if (moreResultsButton) {
+            moreResultsButton.addEventListener('click', () => {
+                const submitButton = document.querySelector(this.settings.submitButton);
+                // Allow normal form submission when moreResultsButton is clicked
+                if (submitButton) {
+                    this.settings.normalFormSubmit = true;
+                    submitButton.click();
+                }
+            });
+        }
+    }
+
     // Method to toggle loading state
     setLoading(isLoading) {
-        const loadingDiv = document.querySelector(this.settings.resultsContainer);
+        let loadingDiv = document.querySelector(this.settings.resultsContainer);
+        if (this.settings.pagination === 'button' && document.querySelector('#ewps-search-form input[name="paged"]').value > 1) {
+            const resultsWrapper = loadingDiv.querySelector('.ewps-pagination');
+            if (resultsWrapper) {
+                loadingDiv = resultsWrapper;
+            }
+        }
         if (!loadingDiv) return;
 
         if (isLoading) {
@@ -241,6 +333,60 @@ class ExtendWpSearch {
         const searchTrigger = document.querySelector(this.settings.searchTrigger);
         if (searchTrigger) searchTrigger.removeEventListener('click', this.toggleFullScreen);
     }
+
+
+    // Initialize pagination or infinite scroll
+    initPagination() {
+        if (this.settings.pagination === 'button') {
+            this.attachLoadMoreEvents();
+        } else {
+            this.attachPaginationEvents();
+        }
+    }
+
+    // Attach click events to load more button
+    attachLoadMoreEvents() {
+        const loadMoreButton = document.querySelector('.ewps-load-more');
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = parseInt(loadMoreButton.getAttribute('data-page')) + 1;
+                loadMoreButton.setAttribute('data-page', page);
+                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.search();
+
+            });
+        }
+    }
+
+
+    // Attach click events to pagination links
+    attachPaginationEvents() {
+        const paginationLinks = document.querySelectorAll('.ewps-pagination a.page-numbers');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = parseInt(link.innerText) || parseInt(link.getAttribute('href').split('page/')[1]);
+                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.search();
+            });
+        });
+    }
+
+
+    // Handle infinite scroll (auto-load next page)
+    handleInfiniteScroll() {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            const loadMoreButton = document.querySelector('.ewps-load-more');
+            if (loadMoreButton) {
+                const page = parseInt(loadMoreButton.getAttribute('data-page')) + 1;
+                document.querySelector('#ewps-search-form input[name="paged"]').value = page;
+                this.search();
+
+            }
+        }
+    }
+
 }
 // Usage Example:
 document.addEventListener('DOMContentLoaded', () => {
