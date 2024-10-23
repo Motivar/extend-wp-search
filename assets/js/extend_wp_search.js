@@ -2,7 +2,6 @@ class ExtendWpSearch {
     constructor(wrapper, options = {}) {
         // Default settings
         this.wrapper = wrapper;
-        console.log(wrapper);
         this.settings = Object.assign({
             searchTrigger: extend_wp_search_vars.trigger || '', // Set from // Assuming a general trigger selector
             formSelector: '#ewps-search-form',
@@ -147,7 +146,6 @@ class ExtendWpSearch {
     // Method to change search container (can be called globally)
     changeSearchContainer(wrap) {
         const container = this.wrapper;
-        console.log(container);
         // Get the elements for results and filter
         const searchResults = container.querySelector('#search_form_resutls');
         const searchFormFilter = container.querySelector('#search_form_filter');
@@ -185,9 +183,7 @@ class ExtendWpSearch {
     // Method to trigger search automatically
     autoTrigger() {
         const searchForm = this.wrapper.querySelector('#search_form');
-        console.log(searchForm);
         if (searchForm && parseInt(searchForm.getAttribute(this.settings.dataTrigger)) === 1) {
-            console.log('aaa');
             this.search(); // Calling search method
         }
     }
