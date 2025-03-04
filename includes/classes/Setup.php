@@ -400,7 +400,7 @@ class Setup
   }
 
 
-  
+
   $response = extend_wp_search_template_part('results.php');
 
   return rest_ensure_response(new \WP_REST_Response($response), 200);
@@ -468,10 +468,14 @@ class Setup
    }
   }
   if (!empty($title)) {
-  $search_title = implode(' ', $title);
+   $search_title = implode(' ', $title);
   }
+  $args = apply_filters('extend_wp_search_query_args_filter', $args);
 
-  // Return the constructed query
-  return new WP_Query($args);
+  // Create the query and mark it as an extend-wp-search query
+  $query = new WP_Query($args);
+  $query->is_extend_wp_search_query = true;
+
+  return $query;
  }
 }
