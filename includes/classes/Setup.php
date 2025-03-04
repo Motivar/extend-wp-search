@@ -476,6 +476,6 @@ class Setup
   $query = new WP_Query($args);
   $query->is_extend_wp_search_query = true;
 
-  return apply_filters('extend_wp_search_query_results_filter', $query);
+  return apply_filters('extend_wp_search_query_results_filter', $query, $args);
  }
 }
