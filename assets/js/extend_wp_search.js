@@ -33,7 +33,7 @@ class ExtendWpSearch {
 
         // Cache form, button, and more-results button to avoid multiple lookups
         const submitButton = this.wrapper.querySelector(this.settings.submitButton);
-        const searchTriggerElement = document.querySelector(this.settings.searchTrigger);
+        const searchTriggerElement = this.settings.searchTrigger != '' ? document.querySelector(this.settings.searchTrigger) : false;
 
         const undoButton = this.wrapper.querySelector('#undo-checkboxes');
         const applyButton = this.wrapper.querySelector('#apply-checkboxes');
